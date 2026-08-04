@@ -1,0 +1,43 @@
+{
+  "name": "satteri-slug",
+  "version": "0.0.0",
+  "description": "Sätteri plugin to add `id` attributes to headings — a port of rehype-slug.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "hast",
+    "markdown",
+    "mdx",
+    "astro",
+    "slug",
+    "heading",
+    "anchor",
+    "rehype-slug"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "github-slugger": "^2.0.0"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
