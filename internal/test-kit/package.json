@@ -1,0 +1,15 @@
+{
+  "name": "@satteri-plugins/test-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  }
+}
