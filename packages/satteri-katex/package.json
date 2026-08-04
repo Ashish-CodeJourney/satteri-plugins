@@ -1,0 +1,45 @@
+{
+  "name": "satteri-katex",
+  "version": "0.0.0",
+  "description": "Sätteri plugin to render math with KaTeX — a port of rehype-katex.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "hast",
+    "markdown",
+    "mdx",
+    "astro",
+    "math",
+    "katex",
+    "latex",
+    "tex",
+    "rehype-katex"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "katex": "^0.16.25"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*",
+    "@types/hast": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
