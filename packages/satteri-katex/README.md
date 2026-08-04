@@ -99,4 +99,4 @@ failing expression cannot inject markup or break out of the `title` attribute.
 
 ## Licence
 
-MIT
+[MIT](https://github.com/Ashish-CodeJourney/satteri-plugins/blob/main/packages/satteri-katex/LICENSE) © Ashish Vaghela

@@ -132,4 +132,4 @@ pnpm test:e2e    # builds the example site with Astro 7 and asserts on its HTML
 
 ## Licence
 
-MIT
+[MIT](LICENSE) © Ashish Vaghela

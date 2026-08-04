@@ -119,4 +119,4 @@ satteriAutolinkHeadings({
 
 ## Licence
 
-MIT
+[MIT](https://github.com/Ashish-CodeJourney/satteri-plugins/blob/main/packages/satteri-autolink-headings/LICENSE) © Ashish Vaghela

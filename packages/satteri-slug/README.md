@@ -94,4 +94,4 @@ Headings that already have an `id` are left untouched — including ids from Sä
 
 ## Licence
 
-MIT
+[MIT](https://github.com/Ashish-CodeJourney/satteri-plugins/blob/main/packages/satteri-slug/LICENSE) © Ashish Vaghela
