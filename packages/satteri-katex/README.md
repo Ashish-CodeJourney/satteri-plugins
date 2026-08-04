@@ -1,11 +1,13 @@
 # satteri-katex
 
-[Sätteri](https://satteri.bruits.org) HAST plugin that renders math with
+[Sätteri](https://satteri.bruits.org) MDAST plugin that renders math with
 [KaTeX](https://katex.org) — a port of [`rehype-katex`](https://github.com/remarkjs/remark-math).
 
 Sätteri **parses** math but does not render it. With `features: { math: true }`, `$x^2$` reaches the
 page as `<code class="language-math math-inline">x^2</code>` — the TeX source, visible to readers.
 This plugin turns it into real KaTeX output.
+
+It runs at the **MDAST** stage, so pass it to `mdastPlugins`.
 
 ## Install
 
@@ -27,7 +29,7 @@ import { satteriKatex } from "satteri-katex";
 
 const { html } = markdownToHtml("Inline $x^2$ and\n\n$$\n\\frac{a}{b}\n$$", {
   features: { math: true },
-  hastPlugins: [satteriKatex()],
+  mdastPlugins: [satteriKatex()],
 });
 ```
 
@@ -46,11 +48,16 @@ export default defineConfig({
   markdown: {
     processor: satteri({
       features: { math: true },
-      hastPlugins: [satteriKatex()],
+      mdastPlugins: [satteriKatex()],
     }),
   },
 });
 ```
+
+> **`mdastPlugins`, not `hastPlugins`.** Astro's Sätteri processor puts its syntax highlighter
+> *ahead* of user HAST plugins. On HAST, display math is still a `<pre><code>`, so the highlighter
+> claims it as a `plaintext` code block before any HAST plugin runs, and `$$…$$` renders as
+> highlighted source instead of maths. Running on MDAST sidesteps the ordering entirely.
 
 ## API
 
@@ -84,10 +91,10 @@ failing expression cannot inject markup or break out of the `title` attribute.
 - Takes options directly rather than via `unified().use()`.
 - `throwOnError` is not accepted. `rehype-katex` ignores it too; errors always become a
   `katex-error` span.
-- Reads Sätteri's `language-math math-inline` / `math-display` class convention, which is the same
-  convention `remark-math` produces, so output structure matches: inline math replaces the `<code>`,
-  display math replaces the whole `<pre>`.
-- Emits KaTeX's HTML as a `raw` node rather than a parsed hast tree. If you also run a sanitiser,
+- Runs on MDAST `math` / `inlineMath` nodes rather than on rendered HAST. Output structure is the
+  same — `<span class="katex-display">` for display math, `<span class="katex">` inline — but it is
+  immune to other plugins claiming the code block first (see the Astro note above).
+- Emits KaTeX's HTML as a raw `html` node rather than a parsed tree. If you also run a sanitiser,
   allow the KaTeX markup through.
 
 ## Licence

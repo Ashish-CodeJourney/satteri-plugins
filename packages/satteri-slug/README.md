@@ -43,6 +43,19 @@ export default defineConfig({
 });
 ```
 
+## Do you need this in Astro?
+
+For ids alone, no: Astro's Sätteri processor already slugs headings with `github-slugger`, and it
+also collects them for `Astro.props.headings`.
+
+You still need this plugin if anything of yours reads heading ids **during** the HAST stage —
+notably [`satteri-autolink-headings`](../satteri-autolink-headings) — because Astro's heading-id
+plugin is appended *after* your own, so the ids do not exist yet when your plugins run. Setting the
+id first is harmless: Astro's plugin keeps an existing id rather than replacing it.
+
+Outside Astro — raw `satteri`, `vite-plugin-satteri`, or your own pipeline — nothing assigns heading
+ids, so this plugin is the only thing that will.
+
 ## API
 
 ### `satteriSlug(options?)`

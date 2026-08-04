@@ -28,6 +28,11 @@ const { html } = markdownToHtml("## Hello World", {
 
 Order matters: Sätteri runs HAST plugins in array order, so `satteriSlug()` must come first.
 
+**In Astro this is not optional.** Astro's Sätteri processor assigns heading ids with its own plugin
+appended *after* your HAST plugins, so at the point this plugin runs the headings still have no
+`id` and every heading is skipped. Including `satteriSlug()` is what makes the anchors appear —
+in the example site, dropping it takes the anchor count from 10 to 1.
+
 With Astro 7:
 
 ```js
