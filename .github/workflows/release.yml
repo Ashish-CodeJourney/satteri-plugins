@@ -3,12 +3,16 @@ name: Release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency: release
 
 permissions:
   contents: write
   pull-requests: write
+  # Required for npm trusted publishing: npm authenticates this workflow over
+  # OIDC, so there is no long-lived token stored anywhere. It also signs the
+  # provenance attestation.
   id-token: write
 
 jobs:
@@ -16,17 +20,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Version comes from `packageManager` (pnpm 10). Do not move to pnpm 11
+      # until pnpm#11513 is fixed — OIDC publishes 404 there.
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
+          registry-url: https://registry.npmjs.org
           cache: pnpm
+      # Trusted publishing needs a recent npm; the one bundled with Node 24 is
+      # older than the OIDC support.
+      - run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm -r typecheck && pnpm test
+      - run: pnpm -r build
+      - run: pnpm -r typecheck
+      - run: pnpm test
+      - run: pnpm test:e2e
       - uses: changesets/action@v1
         with:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
