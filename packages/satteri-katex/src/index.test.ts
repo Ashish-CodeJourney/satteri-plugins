@@ -7,7 +7,7 @@ type Options = Parameters<typeof satteriKatex>[0];
 
 const math = (markdown: string, options?: Options) =>
   render(markdown, {
-    hastPlugins: [satteriKatex(options)],
+    mdastPlugins: [satteriKatex(options)],
     features: { math: true },
   });
 
@@ -105,7 +105,7 @@ describe("satteri-katex", () => {
 
   it("does nothing when the math feature is off", async () => {
     expect(
-      await render("Inline $x^2$ here.", { hastPlugins: [satteriKatex()] }),
+      await render("Inline $x^2$ here.", { mdastPlugins: [satteriKatex()] }),
     ).toBe("<p>Inline $x^2$ here.</p>");
   });
 });

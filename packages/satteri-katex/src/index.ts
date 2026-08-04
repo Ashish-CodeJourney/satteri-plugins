@@ -1,7 +1,6 @@
-import type { Element, ElementContent } from "hast";
 import katex from "katex";
-import { defineHastPlugin } from "satteri";
-import type { HastPluginInput } from "satteri";
+import { defineMdastPlugin } from "satteri";
+import type { MdastPluginInput } from "satteri";
 
 type KatexOptions = Parameters<typeof katex.renderToString>[1];
 
@@ -12,9 +11,6 @@ export type SatteriKatexOptions = Omit<
   /** Colour of the source text left in place when math fails to parse. Default `"#cc0000"`. */
   readonly errorColor?: string;
 };
-
-const INLINE = "math-inline";
-const DISPLAY = "math-display";
 
 const ESCAPES: Record<string, string> = {
   "&": "&amp;",
@@ -27,17 +23,6 @@ const ESCAPES: Record<string, string> = {
 const escapeHtml = (value: string): string =>
   value.replace(/[&<>"']/g, (character) => ESCAPES[character] ?? character);
 
-const hasClass = (node: Readonly<Element>, className: string): boolean => {
-  const classes = node.properties?.["className"];
-  return Array.isArray(classes) && classes.includes(className);
-};
-
-/** The text of a `<code>` element, which is what Sätteri puts the TeX source in. */
-const sourceOf = (node: Readonly<Element>): string =>
-  node.children
-    .map((child) => (child.type === "text" ? child.value : ""))
-    .join("");
-
 const errorSpan = (source: string, message: string, color: string): string =>
   `<span class="katex-error" title="${escapeHtml(message)}" ` +
   `style="color:${escapeHtml(color)}">${escapeHtml(source)}</span>`;
@@ -45,19 +30,22 @@ const errorSpan = (source: string, message: string, color: string): string =>
 /**
  * Renders math with KaTeX — a port of `rehype-katex`.
  *
- * Sätteri parses `$…$` and `$$…$$` into `<code class="language-math math-inline">`
- * and `<pre><code class="language-math math-display">` but renders nothing, so
- * without this plugin math reaches the page as raw TeX. Requires
- * `features: { math: true }`.
+ * Sätteri parses `$…$` and `$$…$$` but renders nothing, so without this plugin
+ * math reaches the page as raw TeX. Requires `features: { math: true }`.
+ *
+ * Runs at the MDAST stage rather than on HAST: Astro's Sätteri processor puts
+ * its syntax highlighter ahead of user HAST plugins, and that highlighter would
+ * otherwise claim display math as a plaintext code block before this plugin
+ * ever saw it.
  */
 export const satteriKatex = ({
   errorColor = "#cc0000",
   ...katexOptions
-}: SatteriKatexOptions = {}): HastPluginInput => {
-  const renderRaw = (source: string, displayMode: boolean): ElementContent => {
+}: SatteriKatexOptions = {}): MdastPluginInput => {
+  const render = (source: string, displayMode: boolean) => {
     try {
       return {
-        type: "raw",
+        type: "html" as const,
         value: katex.renderToString(source, {
           ...katexOptions,
           displayMode,
@@ -65,36 +53,20 @@ export const satteriKatex = ({
         }),
       };
     } catch (error) {
-      // KaTeX failures are authoring mistakes in one expression; the rest of the
-      // document should still build, so the source is left visible and flagged.
+      // A KaTeX failure is an authoring mistake in one expression; the rest of
+      // the document should still build, so the source is left visible and
+      // flagged rather than thrown.
       return {
-        type: "raw",
+        type: "html" as const,
         value: errorSpan(source, String(error), errorColor),
       };
     }
   };
 
-  const displayCode = (node: Readonly<Element>): Element | undefined => {
-    const [child] = node.children;
-    if (child?.type !== "element") return undefined;
-    return hasClass(child, DISPLAY) ? child : undefined;
-  };
-
-  return defineHastPlugin({
+  return defineMdastPlugin({
     name: "satteri-katex",
-    element: {
-      filter: ["pre", "code"],
-      visit(node): ElementContent | undefined {
-        if (node.tagName === "pre") {
-          const code = displayCode(node);
-          // Replacing the `pre` cancels the queued visit of its `code` child, so
-          // display math is never rendered twice.
-          return code === undefined ? undefined : renderRaw(sourceOf(code), true);
-        }
-
-        return hasClass(node, INLINE) ? renderRaw(sourceOf(node), false) : undefined;
-      },
-    },
+    math: (node) => render(node.value, true),
+    inlineMath: (node) => render(node.value, false),
   });
 };
 
