@@ -82,10 +82,14 @@ both are invisible until your output is wrong. Astro composes the plugin list as
 2. **`satteri-slug` is a prerequisite for `satteri-autolink-headings`.** Astro assigns heading ids
    *after* your plugins, so without `satteri-slug` the headings have no `id` yet and every anchor is
    skipped.
+3. **`satteri()` accepts only `mdastPlugins`, `hastPlugins` and `features`.** Anything else you pass
+   it — `shikiConfig`, `gfm`, `smartypants` — is silently dropped. Those belong one level up, on
+   `markdown`, alongside `processor`.
 
 ```js
 export default defineConfig({
   markdown: {
+    shikiConfig: { themes: { light: "github-light", dark: "github-dark" } },
     processor: satteri({
       features: { math: true },
       mdastPlugins: [satteriKatex()],
@@ -110,6 +114,11 @@ Every package follows the same method:
    way, after the unit tests were already green.
 5. **Document divergences.** Where Sätteri's model makes exact parity impossible, each README says so
    under *Differences from …*.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Ports are held to the method above — a PR that skips the
+characterisation or mutation steps will be asked to redo them.
 
 ## Development
 
