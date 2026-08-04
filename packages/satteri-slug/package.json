@@ -1,7 +1,7 @@
 {
   "name": "satteri-slug",
-  "version": "0.0.0",
-  "description": "Sätteri plugin to add `id` attributes to headings — a port of rehype-slug.",
+  "version": "0.1.0",
+  "description": "S\u00e4tteri plugin to add `id` attributes to headings \u2014 a port of rehype-slug.",
   "keywords": [
     "satteri",
     "satteri-plugin",
@@ -15,6 +15,13 @@
     "rehype-slug"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-slug"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-slug#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -23,7 +30,11 @@
       "default": "./dist/index.mjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
     "typecheck": "tsc -p tsconfig.json"

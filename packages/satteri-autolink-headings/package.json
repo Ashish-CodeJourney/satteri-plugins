@@ -1,7 +1,7 @@
 {
   "name": "satteri-autolink-headings",
-  "version": "0.0.0",
-  "description": "Sätteri plugin to add links to headings — a port of rehype-autolink-headings.",
+  "version": "0.1.0",
+  "description": "S\u00e4tteri plugin to add links to headings \u2014 a port of rehype-autolink-headings.",
   "keywords": [
     "satteri",
     "satteri-plugin",
@@ -15,6 +15,13 @@
     "rehype-autolink-headings"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-autolink-headings"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-autolink-headings#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -24,7 +31,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
