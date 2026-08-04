@@ -30,6 +30,22 @@ importers:
         specifier: ^0.9.5
         version: 0.9.5
 
+  packages/satteri-autolink-headings:
+    dependencies:
+      satteri:
+        specifier: ^0.9.5
+        version: 0.9.5
+    devDependencies:
+      '@satteri-plugins/test-kit':
+        specifier: workspace:*
+        version: link:../../internal/test-kit
+      '@types/hast':
+        specifier: ^3.0.5
+        version: 3.0.5
+      satteri-slug:
+        specifier: workspace:*
+        version: link:../satteri-slug
+
   packages/satteri-slug:
     dependencies:
       github-slugger:
