@@ -6,9 +6,12 @@ on:
   pull_request:
 
 jobs:
-  verify:
+  # The published packages support Node 20; only the example site's toolchain
+  # (Astro 7 needs >=22.12) does not, so it is verified separately below.
+  unit:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node: [20, 22, 24]
     steps:
@@ -21,8 +24,24 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Build first: packages resolve each other through their published
       # `exports`, so sibling types do not exist until dist does.
-      - run: pnpm -r build
-      - run: pnpm -r typecheck
+      - run: pnpm build
+      - run: pnpm --filter "./packages/*" --filter "./internal/*" typecheck
       - run: pnpm test
-      # Proves the plugins survive a real Astro build, not just markdownToHtml.
+
+  # Proves the plugins survive a real Astro build, not just markdownToHtml.
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - run: pnpm test:e2e

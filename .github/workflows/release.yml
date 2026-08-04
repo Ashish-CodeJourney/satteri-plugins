@@ -32,8 +32,8 @@ jobs:
       # older than the OIDC support.
       - run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
-      - run: pnpm -r build
-      - run: pnpm -r typecheck
+      - run: pnpm build
+      - run: pnpm --filter "./packages/*" --filter "./internal/*" typecheck
       - run: pnpm test
       - run: pnpm test:e2e
       - uses: changesets/action@v1

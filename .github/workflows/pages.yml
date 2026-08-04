@@ -25,7 +25,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm -r build
+      - run: pnpm build
       - name: Build and verify the example site
         run: pnpm test:e2e
         env:
