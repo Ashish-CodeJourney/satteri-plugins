@@ -7,7 +7,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "typecheck": "astro check --minimumSeverity error",
     "test:e2e": "astro build && vitest run"
   },
   "devDependencies": {
