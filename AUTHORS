@@ -1,0 +1,19 @@
+# Authors
+
+The people who have contributed to satteri-plugins, in order of first contribution.
+See CONTRIBUTING.md if you would like to join them.
+
+Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)
+
+# Acknowledgements
+#
+# These packages are ports. The behaviour they reproduce — and in most cases the
+# option names, the edge cases and the exact output — is the work of the original
+# authors:
+#
+#   rehype-slug, rehype-autolink-headings   Titus Wormer and the rehype contributors
+#   rehype-katex, remark-math               Titus Wormer and the remark-math contributors
+#   github-slugger                          Flet and contributors
+#   KaTeX                                   Khan Academy and the KaTeX contributors
+#
+# Sätteri itself is by the bruits team (https://github.com/bruits/satteri).
