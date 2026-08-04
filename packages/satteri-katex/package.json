@@ -1,7 +1,7 @@
 {
   "name": "satteri-katex",
-  "version": "0.1.0",
-  "description": "S\u00e4tteri plugin to render math with KaTeX \u2014 a port of rehype-katex.",
+  "version": "0.1.1",
+  "description": "Sätteri plugin to render math with KaTeX — a port of rehype-katex.",
   "keywords": [
     "satteri",
     "satteri-plugin",

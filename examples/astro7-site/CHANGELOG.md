@@ -1,5 +1,14 @@
 # @satteri-plugins/example-astro7-site
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [18272ba]
+  - satteri-slug@0.1.1
+  - satteri-autolink-headings@0.1.1
+  - satteri-katex@0.1.1
+
 ## 0.0.1
 
 ### Patch Changes
