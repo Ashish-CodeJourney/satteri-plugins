@@ -1,0 +1,118 @@
+---
+const { frontmatter } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{frontmatter.title}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css"
+      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
+      crossorigin="anonymous"
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #16181d;
+        --bg: #ffffff;
+        --muted: #5c6370;
+        --line: #e3e6ea;
+        --accent: #6b46ff;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e6e8ec;
+          --bg: #14161a;
+          --muted: #9aa1ac;
+          --line: #2a2e36;
+          --accent: #a48bff;
+        }
+      }
+
+      body {
+        margin: 0 auto;
+        padding: 3rem 1.25rem 6rem;
+        max-width: 46rem;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.25;
+        margin: 2.5rem 0 0.75rem;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      h2 {
+        padding-bottom: 0.3rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      /* The anchor added by satteri-autolink-headings. */
+      .anchor {
+        margin-left: 0.4rem;
+        color: var(--muted);
+        text-decoration: none;
+        opacity: 0;
+        transition: opacity 0.12s ease-in-out;
+      }
+
+      h1:hover .anchor,
+      h2:hover .anchor,
+      h3:hover .anchor,
+      h4:hover .anchor,
+      .anchor:focus {
+        opacity: 1;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+      }
+
+      th,
+      td {
+        padding: 0.5rem 0.6rem;
+        border: 1px solid var(--line);
+        text-align: left;
+      }
+
+      pre {
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.9em;
+      }
+
+      .katex-display {
+        margin: 1.75rem 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

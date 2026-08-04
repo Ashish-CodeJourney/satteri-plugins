@@ -1,0 +1,25 @@
+{
+  "name": "@satteri-plugins/example-astro7-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check --minimumSeverity error",
+    "test:e2e": "astro build && vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.3.5",
+    "astro": "^7.1.6",
+    "katex": "^0.16.25",
+    "satteri": "^0.9.5",
+    "satteri-autolink-headings": "workspace:*",
+    "satteri-katex": "workspace:*",
+    "satteri-slug": "workspace:*"
+  }
+}

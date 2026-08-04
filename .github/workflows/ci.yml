@@ -22,3 +22,5 @@ jobs:
       - run: pnpm -r typecheck
       - run: pnpm test
       - run: pnpm -r build
+      # Proves the plugins survive a real Astro build, not just markdownToHtml.
+      - run: pnpm test:e2e
