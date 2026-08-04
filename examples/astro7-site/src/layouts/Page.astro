@@ -1,5 +1,6 @@
 ---
 const { frontmatter } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -8,96 +9,330 @@ const { frontmatter } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{frontmatter.title}</title>
+    <meta name="description" content={frontmatter.description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href={Astro.url.href} />
+    <meta property="og:title" content={frontmatter.title} />
+    <meta property="og:description" content={frontmatter.description} />
+    <meta property="og:type" content="website" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%88%91%3C/text%3E%3C/svg%3E"
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css"
-      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
       crossorigin="anonymous"
     />
+
+    <!-- Applied before first paint so the page never flashes the wrong theme. -->
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem("theme");
+        const theme =
+          stored ??
+          (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+
     <style>
       :root {
-        color-scheme: light dark;
-        --fg: #16181d;
-        --bg: #ffffff;
-        --muted: #5c6370;
-        --line: #e3e6ea;
-        --accent: #6b46ff;
+        --bg: #fdfdfc;
+        --bg-raised: #ffffff;
+        --bg-sunken: #f4f4f2;
+        --fg: #1c1d21;
+        --fg-muted: #5f6470;
+        --line: #e2e2de;
+        --accent: #5b3df5;
+        --accent-soft: #ede9fe;
+        --shadow: 0 1px 2px rgb(28 29 33 / 0.05), 0 8px 24px -12px rgb(28 29 33 / 0.12);
       }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --fg: #e6e8ec;
-          --bg: #14161a;
-          --muted: #9aa1ac;
-          --line: #2a2e36;
-          --accent: #a48bff;
+      :root[data-theme="dark"] {
+        --bg: #101114;
+        --bg-raised: #17191d;
+        --bg-sunken: #1c1f24;
+        --fg: #e8e9ec;
+        --fg-muted: #9ba1ac;
+        --line: #282c33;
+        --accent: #a78bfa;
+        --accent-soft: #241f3d;
+        --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        /* Anchored headings should not hide under the sticky header. */
+        scroll-padding-top: 5rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          transition: none !important;
         }
       }
 
       body {
-        margin: 0 auto;
-        padding: 3rem 1.25rem 6rem;
-        max-width: 46rem;
+        margin: 0;
         background: var(--bg);
         color: var(--fg);
-        font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+        font:
+          16px/1.7 ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
       }
 
-      h1,
-      h2,
-      h3 {
-        line-height: 1.25;
-        margin: 2.5rem 0 0.75rem;
+      .shell {
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        max-width: 48rem;
       }
 
-      h1 {
-        margin-top: 0;
-      }
+      /* ---------- header ---------- */
 
-      h2 {
-        padding-bottom: 0.3rem;
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+        backdrop-filter: blur(8px);
         border-bottom: 1px solid var(--line);
+      }
+
+      .site-header > .shell {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        height: 3.5rem;
+      }
+
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--fg);
+        font-weight: 620;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+      }
+
+      .wordmark .sigil {
+        display: grid;
+        place-items: center;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.95rem;
+        line-height: 1;
+      }
+
+      .header-links {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .ghost {
+        display: inline-grid;
+        place-items: center;
+        min-width: 2.1rem;
+        height: 2.1rem;
+        padding: 0 0.6rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: none;
+        color: var(--fg-muted);
+        font: inherit;
+        font-size: 0.875rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          color 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .ghost:hover {
+        border-color: var(--line);
+        background: var(--bg-sunken);
+        color: var(--fg);
+      }
+
+      .ghost:focus-visible,
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* Each icon is shown only in the theme it switches away from. */
+      :root[data-theme="dark"] .icon-moon,
+      :root:not([data-theme="dark"]) .icon-sun {
+        display: none;
+      }
+
+      /* ---------- hero ---------- */
+
+      .hero {
+        padding: 4rem 0 2.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 1rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .hero h1 {
+        margin: 0 0 0.75rem;
+        font-size: clamp(2rem, 6vw, 2.75rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 34rem;
+        color: var(--fg-muted);
+        font-size: 1.075rem;
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.75rem;
+      }
+
+      .pill {
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--bg-raised);
+        color: var(--fg-muted);
+        font-size: 0.8rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        text-decoration: none;
+        transition:
+          color 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .pill:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* ---------- article ---------- */
+
+      article {
+        padding: 1rem 0 4rem;
+      }
+
+      article h2,
+      article h3 {
+        scroll-margin-top: 5rem;
+        letter-spacing: -0.015em;
+        line-height: 1.3;
+      }
+
+      article h2 {
+        margin: 3.5rem 0 1rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--line);
+        font-size: 1.5rem;
+      }
+
+      article h3 {
+        margin: 2.25rem 0 0.75rem;
+        font-size: 1.15rem;
+      }
+
+      article p {
+        margin: 1rem 0;
       }
 
       a {
         color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
       }
 
       /* The anchor added by satteri-autolink-headings. */
       .anchor {
-        margin-left: 0.4rem;
-        color: var(--muted);
+        margin-left: 0.45rem;
+        color: var(--fg-muted);
+        font-weight: 400;
         text-decoration: none;
         opacity: 0;
-        transition: opacity 0.12s ease-in-out;
+        transition: opacity 0.15s ease;
       }
 
-      h1:hover .anchor,
-      h2:hover .anchor,
-      h3:hover .anchor,
-      h4:hover .anchor,
-      .anchor:focus {
+      h1:hover > .anchor,
+      h2:hover > .anchor,
+      h3:hover > .anchor,
+      h4:hover > .anchor,
+      h5:hover > .anchor,
+      h6:hover > .anchor,
+      .anchor:focus-visible {
         opacity: 1;
       }
 
       table {
+        display: block;
         width: 100%;
-        border-collapse: collapse;
         margin: 1.5rem 0;
+        border-collapse: collapse;
+        overflow-x: auto;
+        font-size: 0.925rem;
       }
 
       th,
       td {
-        padding: 0.5rem 0.6rem;
+        padding: 0.55rem 0.7rem;
         border: 1px solid var(--line);
         text-align: left;
       }
 
+      th {
+        background: var(--bg-sunken);
+        font-weight: 600;
+      }
+
       pre {
-        padding: 1rem;
+        margin: 1.5rem 0;
+        padding: 1rem 1.15rem;
         border: 1px solid var(--line);
-        border-radius: 8px;
+        border-radius: 10px;
         overflow-x: auto;
+        font-size: 0.875rem;
+        line-height: 1.6;
       }
 
       code {
@@ -105,14 +340,234 @@ const { frontmatter } = Astro.props;
         font-size: 0.9em;
       }
 
+      /* Inline code only — Shiki styles its own block. */
+      :not(pre) > code {
+        padding: 0.15em 0.4em;
+        border-radius: 5px;
+        background: var(--bg-sunken);
+      }
+
+      blockquote {
+        margin: 1.5rem 0;
+        padding: 0.25rem 0 0.25rem 1.1rem;
+        border-left: 3px solid var(--accent);
+        color: var(--fg-muted);
+      }
+
+      ul,
+      ol {
+        padding-left: 1.4rem;
+      }
+
+      li {
+        margin: 0.35rem 0;
+      }
+
+      hr {
+        margin: 3rem 0;
+        border: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      /* Shiki emits both palettes as CSS variables (defaultColor: false), so the
+         active theme is chosen here rather than by prefers-color-scheme. */
+      .astro-code,
+      .astro-code span {
+        color: var(--shiki-light);
+        background-color: var(--shiki-light-bg);
+      }
+
+      :root[data-theme="dark"] .astro-code,
+      :root[data-theme="dark"] .astro-code span {
+        color: var(--shiki-dark);
+        background-color: var(--shiki-dark-bg);
+      }
+
       .katex-display {
         margin: 1.75rem 0;
+        padding: 0.5rem 0;
         overflow-x: auto;
         overflow-y: hidden;
       }
+
+      /* ---------- about + footer ---------- */
+
+      .about {
+        display: flex;
+        gap: 1.25rem;
+        align-items: flex-start;
+        margin: 0 0 3rem;
+        padding: 1.5rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--bg-raised);
+        box-shadow: var(--shadow);
+      }
+
+      .avatar {
+        flex: none;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--bg-sunken);
+      }
+
+      .about h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.05rem;
+      }
+
+      .about .role {
+        margin: 0 0 0.75rem;
+        color: var(--fg-muted);
+        font-size: 0.9rem;
+      }
+
+      .about p {
+        margin: 0 0 0.9rem;
+        font-size: 0.95rem;
+      }
+
+      .about-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.875rem;
+      }
+
+      @media (max-width: 34rem) {
+        .about {
+          flex-direction: column;
+        }
+      }
+
+      .site-footer {
+        padding: 2rem 0 3rem;
+        border-top: 1px solid var(--line);
+        color: var(--fg-muted);
+        font-size: 0.85rem;
+      }
+
+      .site-footer p {
+        margin: 0.35rem 0;
+      }
     </style>
   </head>
+
   <body>
-    <slot />
+    <header class="site-header">
+      <div class="shell">
+        <a class="wordmark" href={base}>
+          <span class="sigil" aria-hidden="true">∑</span>
+          satteri-plugins
+        </a>
+        <nav class="header-links">
+          <a class="ghost" href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>
+          <a class="ghost" href="https://www.npmjs.com/package/satteri-katex">npm</a>
+          <button class="ghost" id="theme-toggle" type="button" aria-label="Switch theme">
+            <svg
+              class="icon-sun"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path
+                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+              ></path>
+            </svg>
+            <svg
+              class="icon-moon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <div class="shell">
+      <section class="hero">
+        <span class="eyebrow">Astro 7 · Sätteri</span>
+        <h1>{frontmatter.title}</h1>
+        <p>{frontmatter.description}</p>
+        <div class="pills">
+          <a class="pill" href="https://www.npmjs.com/package/satteri-slug">satteri-slug</a>
+          <a class="pill" href="https://www.npmjs.com/package/satteri-autolink-headings">
+            satteri-autolink-headings
+          </a>
+          <a class="pill" href="https://www.npmjs.com/package/satteri-katex">satteri-katex</a>
+        </div>
+      </section>
+
+      <main>
+        <article>
+          <slot />
+        </article>
+
+        <aside class="about">
+          <img
+            class="avatar"
+            src="https://github.com/Ashish-CodeJourney.png?size=140"
+            alt=""
+            width="56"
+            height="56"
+            loading="lazy"
+          />
+          <div>
+            <h2>Ashish Vaghela</h2>
+            <p class="role">Software Crafter at Nelkinda</p>
+            <p>
+              Builds open source tooling for the Astro and Sätteri ecosystem. These plugins came out
+              of migrating real sites off the unified pipeline and finding the plugin ecosystem
+              missing.
+            </p>
+            <div class="about-links">
+              <a href="https://ashish-codejourney.github.io/" rel="me">Website</a>
+              <a href="https://github.com/Ashish-CodeJourney" rel="me">GitHub</a>
+              <a href="https://www.npmjs.com/~codejourney" rel="me">npm</a>
+              <a href="https://linkedin.com/in/ashish-codejourney" rel="me">LinkedIn</a>
+              <a href="https://twitter.com/ashishvaghelaa" rel="me">Twitter</a>
+              <a href="mailto:ashish.vaghela@nelkinda.com">Email</a>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="shell">
+        <p>
+          MIT licensed · <a href="https://github.com/Ashish-CodeJourney/satteri-plugins">Source</a> ·
+          <a href="https://github.com/Ashish-CodeJourney/satteri-plugins/blob/main/CONTRIBUTING.md">
+            Contributing
+          </a>
+        </p>
+        <p>Built with Astro 7 and Sätteri. This page is snapshot-tested in CI.</p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      document.getElementById("theme-toggle").addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("theme", next);
+      });
+    </script>
   </body>
 </html>

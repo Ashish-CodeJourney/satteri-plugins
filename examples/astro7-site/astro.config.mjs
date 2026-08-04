@@ -12,6 +12,14 @@ export default defineConfig({
   ...(site === undefined ? {} : { site }),
   ...(base === undefined ? {} : { base }),
   markdown: {
+    // Belongs here, not inside satteri(): the satteri() wrapper forwards only
+    // mdastPlugins, hastPlugins and features, and drops everything else.
+    // Both palettes are emitted as CSS variables so the stylesheet can pick one
+    // from the data-theme attribute rather than from prefers-color-scheme.
+    shikiConfig: {
+      themes: { light: "github-light", dark: "github-dark" },
+      defaultColor: false,
+    },
     processor: satteri({
       features: { math: true },
       mdastPlugins: [satteriKatex()],

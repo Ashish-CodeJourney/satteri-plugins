@@ -1,9 +1,8 @@
 ---
 layout: ../layouts/Page.astro
-title: satteri-plugins
+title: Ports of the plugins Sätteri left behind
+description: rehype-slug, rehype-autolink-headings and rehype-katex, rebuilt for the Rust Markdown engine behind Astro 7 — and proven by this page.
 ---
-
-# satteri-plugins
 
 Every heading on this page is given an `id` by [`satteri-slug`](https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-slug)
 and an anchor link by [`satteri-autolink-headings`](https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-autolink-headings).

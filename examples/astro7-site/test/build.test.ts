@@ -8,11 +8,21 @@ import { describe, expect, it } from "vitest";
  *
  * Run `pnpm build` in this package first; CI does that before calling vitest.
  */
-const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+const page = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+
+/**
+ * Only the rendered markdown. The layout contributes its own headings and links,
+ * which are not the plugins' output and must not be counted as such.
+ */
+const html = /<article[^>]*>([\s\S]*?)<\/article>/.exec(page)?.[1] ?? "";
 
 const countOf = (pattern: RegExp) => html.match(pattern)?.length ?? 0;
 
 describe("astro 7 build", () => {
+  it("renders the markdown into the layout", () => {
+    expect(html).not.toBe("");
+  });
+
   it("gives every content heading an id", () => {
     const headings = html.match(/<h[1-4][^>]*>/g) ?? [];
 
