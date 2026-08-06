@@ -14,6 +14,7 @@ each tested against the output of the plugin it replaces.
 | [`satteri-slug`](packages/satteri-slug) | `rehype-slug` | Adds `id` to every heading, via the same `github-slugger` |
 | [`satteri-autolink-headings`](packages/satteri-autolink-headings) | `rehype-autolink-headings` | Adds anchor links to headings |
 | [`satteri-katex`](packages/satteri-katex) | `rehype-katex` | Renders math with KaTeX |
+| [`satteri-sanitize`](packages/satteri-sanitize) | `rehype-sanitize` | Strips unsafe HTML, attributes and URLs |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -48,6 +49,7 @@ Sätteri does **not** generate heading ids on its own — that is what
 | `rehype-slug` | [`satteri-slug`](packages/satteri-slug) |
 | `rehype-autolink-headings` | [`satteri-autolink-headings`](packages/satteri-autolink-headings) |
 | `rehype-katex` | [`satteri-katex`](packages/satteri-katex) |
+| `rehype-sanitize` | [`satteri-sanitize`](packages/satteri-sanitize) |
 
 ### Already covered by the community
 
@@ -64,8 +66,14 @@ Sätteri does **not** generate heading ids on its own — that is what
 
 ### Not ported yet
 
-`rehype-sanitize`, `rehype-mathjax`, `rehype-highlight`, `remark-validate-links`, and a
-`unified` compatibility shim. Contributions welcome.
+`rehype-mathjax`, `rehype-highlight`, `remark-validate-links`, and a `unified` compatibility shim.
+Contributions welcome.
+
+## Security
+
+Sätteri passes raw HTML through unparsed, so Markdown from an untrusted source is an XSS vector by
+default. If any of your content is user-supplied, run
+[`satteri-sanitize`](packages/satteri-sanitize) last in your `hastPlugins`.
 
 ## Using these with Astro 7
 
