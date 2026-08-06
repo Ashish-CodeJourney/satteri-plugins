@@ -75,3 +75,30 @@ const { html } = markdownToHtml("## Hello", {
 Inline `code` is untouched too — only `language-math` blocks are rendered as maths.
 
 [^1]: Footnotes are part of GFM, which Sätteri enables by default.
+
+## Line breaks
+
+`satteri-breaks` turns a single newline into a break, so this address
+stays on three lines
+instead of collapsing into one.
+
+## GitHub references
+
+`satteri-github` autolinks issues and mentions against this repo: #1 links to the
+first issue, @Ashish-CodeJourney links to a profile, and a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+links to a commit with the text abbreviated.
+
+## Untrusted HTML
+
+`satteri-sanitize` runs last, so it sees every other plugin's output as well as the
+document's own HTML. The block below contains a script, an event handler and a
+`javascript:` link, and none of them survive.
+
+<div class="demo" onclick="alert('nope')">
+  <script>alert('nope')</script>
+  <a href="javascript:alert('nope')">a link that loses its href</a>
+  <b>bold survives</b>
+</div>
+
+Ampersands already encoded by the author, like AT&amp;T, are left encoded rather
+than being escaped a second time.

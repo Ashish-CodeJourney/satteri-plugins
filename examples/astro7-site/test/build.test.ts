@@ -9,6 +9,10 @@ import { describe, expect, it } from "vitest";
  * Run `pnpm build` in this package first; CI does that before calling vitest.
  */
 const page = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+const mdxPage = readFileSync(new URL("../dist/mdx/index.html", import.meta.url), "utf8");
+
+/** Which maths renderer this build used. CI builds the site once per renderer. */
+const usingMathjax = process.env["MATH"] === "mathjax";
 
 /**
  * Only the rendered markdown. The layout contributes its own headings and links,
@@ -51,19 +55,87 @@ describe("astro 7 build", () => {
   });
 
   it("renders both display equations", () => {
+    if (usingMathjax) {
+      expect(countOf(/<mjx-container[^>]*display="true"/g)).toBe(2);
+      return;
+    }
     expect(countOf(/<span class="katex-display"/g)).toBe(2);
   });
 
   it("renders inline math inside its paragraph", () => {
-    expect(html).toMatch(/<p>Inline maths flows[\s\S]*?<span class="katex">/);
+    const marker = usingMathjax ? /<mjx-container/ : /<span class="katex">/;
+    expect(html).toMatch(new RegExp(`<p>Inline maths flows[\\s\\S]*?${marker.source}`));
+  });
+
+  it("keeps rendered maths through the sanitiser", () => {
+    // satteri-sanitize runs last, so it sees the maths markup. Its default
+    // allowlist does not cover MathML or SVG, which is why the site widens it.
+    expect(html).toMatch(usingMathjax ? /<mjx-container/ : /<math|<span class="katex"/);
+  });
+
+  it("turns single newlines into breaks", () => {
+    expect(html).toMatch(/stays on three lines<br>/);
+  });
+
+  it("autolinks a github issue reference", () => {
+    expect(html).toContain(
+      'href="https://github.com/Ashish-CodeJourney/satteri-plugins/issues/1"',
+    );
+  });
+
+  it("autolinks a mention and a commit sha", () => {
+    expect(html).toContain('href="https://github.com/Ashish-CodeJourney"');
+    expect(html).toMatch(/commit\/a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0"/);
+    expect(html).toContain("<code>a1b2c3d</code>");
+  });
+
+  describe("the sanitiser, which runs last", () => {
+    it("removes a script from the document", () => {
+      expect(page).not.toMatch(/<script>alert/);
+    });
+
+    it("removes an event handler", () => {
+      expect(html).not.toMatch(/\son[a-z]+=/i);
+    });
+
+    it("removes a javascript: href but keeps the link text", () => {
+      expect(html).not.toContain('href="javascript');
+      expect(html).toContain("a link that loses its href");
+    });
+
+    it("keeps allowed markup inside the sanitised block", () => {
+      expect(html).toContain("<b>bold survives</b>");
+    });
+
+    it("does not double-escape an entity the author already wrote", () => {
+      expect(html).toContain("AT&amp;T");
+      expect(html).not.toContain("&#x26;amp;");
+    });
+  });
+
+  describe("the mdx page", () => {
+    it("exposes frontmatter to the page as an export", () => {
+      expect(mdxPage).toContain("MDX frontmatter as an export");
+    });
+
+    it("renders the heading from frontmatter.title rather than literally", () => {
+      expect(mdxPage).not.toContain("{frontmatter.title}");
+    });
   });
 
   it("flags unparseable math without failing the build", () => {
+    // MathJax renders its own merror container rather than throwing, so the two
+    // renderers report a bad expression differently.
+    if (usingMathjax) {
+      expect(html).toMatch(/data-mjx-error|merror/);
+      return;
+    }
     expect(countOf(/class="katex-error"/g)).toBe(1);
     expect(html).toContain("style=\"color:#cc0000\"");
   });
 
   it("escapes quotes in the error title", () => {
+    if (usingMathjax) return;
     const title = /class="katex-error" title="([^"]*)"/.exec(html)?.[1];
 
     expect(title).toContain("&#x27;");

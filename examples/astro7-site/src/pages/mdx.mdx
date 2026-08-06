@@ -1,0 +1,17 @@
+---
+title: MDX frontmatter as an export
+description: satteri-mdx-frontmatter turns this page's frontmatter into an export the page itself can read.
+---
+
+export const metadata = { checked: true };
+
+# {frontmatter.title}
+
+This page is MDX. Its frontmatter is exposed as an export by
+`satteri-mdx-frontmatter`, so the heading above reads `frontmatter.title` and
+renders **{frontmatter.title}**.
+
+Without that plugin, `frontmatter` is an undefined free variable and the page
+throws at render rather than at build, which is the worst place to find out.
+
+The description, also from frontmatter: {frontmatter.description}
