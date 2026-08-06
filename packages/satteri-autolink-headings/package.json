@@ -41,6 +41,7 @@
   },
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
+    "prepublishOnly": "node ../../scripts/check-publishable.mjs",
     "typecheck": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
