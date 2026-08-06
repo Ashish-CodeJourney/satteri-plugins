@@ -1,0 +1,61 @@
+{
+  "name": "satteri-mathjax",
+  "version": "0.0.0",
+  "description": "S\u00e4tteri plugin to render math with MathJax \u2014 a port of rehype-mathjax.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "mdast",
+    "markdown",
+    "mdx",
+    "astro",
+    "math",
+    "mathjax",
+    "latex",
+    "tex",
+    "rehype-mathjax"
+  ],
+  "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-mathjax"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-mathjax#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "prepublishOnly": "node ../../scripts/check-publishable.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*",
+    "@types/hast": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "mathjax-full": "^3.2.2"
+  }
+}
