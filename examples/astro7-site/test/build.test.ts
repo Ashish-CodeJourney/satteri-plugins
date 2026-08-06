@@ -15,6 +15,14 @@ const mdxPage = readFileSync(new URL("../dist/mdx/index.html", import.meta.url),
 const usingMathjax = process.env["MATH"] === "mathjax";
 
 /**
+ * The base path this build was deployed under, without a trailing slash. GitHub
+ * Pages serves the site from a subdirectory, so links built by the layout have
+ * to be joined to it correctly — concatenating onto `import.meta.env.BASE_URL`
+ * is wrong, because it carries no trailing slash.
+ */
+const base = (process.env["BASE"] ?? "").replace(/\/$/, "");
+
+/**
  * Only the rendered markdown. The layout contributes its own headings and links,
  * which are not the plugins' output and must not be counted as such.
  */
@@ -25,6 +33,26 @@ const countOf = (pattern: RegExp) => html.match(pattern)?.length ?? 0;
 describe("astro 7 build", () => {
   it("renders the markdown into the layout", () => {
     expect(html).not.toBe("");
+  });
+
+  describe("the layout's own links", () => {
+    /** Every site-internal href in the page shell, excluding in-page anchors. */
+    const internal = [...page.matchAll(/<a [^>]*href="(\/[^"]*)"/g)].map(([, href]) => href);
+
+    it("points the nav at the mdx page", () => {
+      expect(internal).toContain(`${base}/mdx/`);
+    });
+
+    it("points the wordmark and home link at the site root", () => {
+      expect(internal).toContain(`${base}/`);
+    });
+
+    it("prefixes every internal link with the base path", () => {
+      expect(internal.length).toBeGreaterThan(2);
+      for (const href of internal) {
+        expect(href.startsWith(`${base}/`)).toBe(true);
+      }
+    });
   });
 
   it("gives every content heading an id", () => {

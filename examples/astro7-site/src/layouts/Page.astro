@@ -1,6 +1,9 @@
 ---
 const { frontmatter } = Astro.props;
-const base = import.meta.env.BASE_URL;
+
+// BASE_URL carries no trailing slash when the site is deployed under a base
+// path, so concatenating onto it yields "/satteri-pluginsmdx/". Join instead.
+const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/${path}`;
 ---
 
 <!doctype html>
@@ -458,13 +461,13 @@ const base = import.meta.env.BASE_URL;
   <body>
     <header class="site-header">
       <div class="shell">
-        <a class="wordmark" href={base}>
+        <a class="wordmark" href={href("")}>
           <span class="sigil" aria-hidden="true">∑</span>
           satteri-plugins
         </a>
         <nav class="header-links">
-          <a class="ghost" href={base}>Plugins</a>
-          <a class="ghost" href={`${base}mdx/`}>MDX</a>
+          <a class="ghost" href={href("")}>Plugins</a>
+          <a class="ghost" href={href("mdx/")}>MDX</a>
           <a class="ghost" href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>
           <button class="ghost" id="theme-toggle" type="button" aria-label="Switch theme">
             <svg
