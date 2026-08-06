@@ -77,6 +77,13 @@ describe("astro 7 build", () => {
     expect(html).toMatch(/stays on three lines<br>/);
   });
 
+  it("breaks only where the source asks for it", () => {
+    // satteri-breaks applies to the whole document, so a hard-wrapped paragraph
+    // renders a break at every wrap point. The prose is written one line per
+    // paragraph to avoid that; only the three-line address above should break.
+    expect(countOf(/<br\/?>/g)).toBe(2);
+  });
+
   it("autolinks a github issue reference", () => {
     expect(html).toContain(
       'href="https://github.com/Ashish-CodeJourney/satteri-plugins/issues/1"',
