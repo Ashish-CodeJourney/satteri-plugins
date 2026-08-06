@@ -1,5 +1,12 @@
 # @satteri-plugins/example-astro7-site
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [2cc04b1]
+  - satteri-sanitize@0.1.1
+
 ## 0.0.2
 
 ### Patch Changes
