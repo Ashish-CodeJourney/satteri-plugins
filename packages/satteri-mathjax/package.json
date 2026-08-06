@@ -1,7 +1,7 @@
 {
   "name": "satteri-mathjax",
-  "version": "0.0.0",
-  "description": "S\u00e4tteri plugin to render math with MathJax \u2014 a port of rehype-mathjax.",
+  "version": "0.1.0",
+  "description": "Sätteri plugin to render math with MathJax — a port of rehype-mathjax.",
   "keywords": [
     "satteri",
     "satteri-plugin",

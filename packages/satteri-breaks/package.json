@@ -1,7 +1,7 @@
 {
   "name": "satteri-breaks",
-  "version": "0.0.0",
-  "description": "S\u00e4tteri plugin to turn line breaks into <br> \u2014 a port of remark-breaks.",
+  "version": "0.1.0",
+  "description": "Sätteri plugin to turn line breaks into <br> — a port of remark-breaks.",
   "keywords": [
     "satteri",
     "satteri-plugin",
