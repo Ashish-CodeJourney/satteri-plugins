@@ -1,7 +1,7 @@
 {
   "name": "satteri-github",
-  "version": "0.0.0",
-  "description": "S\u00e4tteri plugin to autolink GitHub references \u2014 a port of remark-github.",
+  "version": "0.1.0",
+  "description": "Sätteri plugin to autolink GitHub references — a port of remark-github.",
   "keywords": [
     "satteri",
     "satteri-plugin",
