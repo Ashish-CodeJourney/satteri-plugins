@@ -16,6 +16,9 @@ each tested against the output of the plugin it replaces.
 | [`satteri-katex`](packages/satteri-katex) | `rehype-katex` | Renders math with KaTeX |
 | [`satteri-sanitize`](packages/satteri-sanitize) | `rehype-sanitize` | Strips unsafe HTML, attributes and URLs |
 | [`satteri-breaks`](packages/satteri-breaks) | `remark-breaks` | Turns single newlines into `<br>` |
+| [`satteri-mathjax`](packages/satteri-mathjax) | `rehype-mathjax` | Renders math with MathJax |
+| [`satteri-github`](packages/satteri-github) | `remark-github` | Autolinks issues, mentions and SHAs |
+| [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) | `remark-mdx-frontmatter` | Exposes MDX frontmatter as exports |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -52,6 +55,9 @@ Sätteri does **not** generate heading ids on its own — that is what
 | `rehype-katex` | [`satteri-katex`](packages/satteri-katex) |
 | `rehype-sanitize` | [`satteri-sanitize`](packages/satteri-sanitize) |
 | `remark-breaks` | [`satteri-breaks`](packages/satteri-breaks) |
+| `rehype-mathjax` | [`satteri-mathjax`](packages/satteri-mathjax) |
+| `remark-github` | [`satteri-github`](packages/satteri-github) |
+| `remark-mdx-frontmatter` | [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) |
 
 ### Already covered by the community
 
@@ -67,8 +73,9 @@ Sätteri does **not** generate heading ids on its own — that is what
 
 ### Not ported yet
 
-`rehype-mathjax`, `rehype-highlight`, `remark-validate-links`, and a `unified` compatibility shim.
-Contributions welcome.
+`rehype-highlight`, `remark-validate-links`, and a `unified` compatibility shim. Contributions
+welcome. Note that `remark-validate-links` needs a reporting design first: see the diagnostics point
+below.
 
 ## Security
 
@@ -96,7 +103,12 @@ both are invisible until your output is wrong. Astro composes the plugin list as
 3. **`satteri()` accepts only `mdastPlugins`, `hastPlugins` and `features`.** Anything else you pass
    it — `shikiConfig`, `gfm`, `smartypants` — is silently dropped. Those belong one level up, on
    `markdown`, alongside `processor`.
-4. **`ctx.report()` diagnostics never reach you.** They are collected per visitor and readable only
+4. **A returned plugin definition is reused across every compile.** `MdastPluginInput` also accepts a
+   factory (`() => defineMdastPlugin(...)`), and that is the only way to get per-document state. Any
+   plugin holding a counter, a dedupe set or an emit-once flag must return a factory or it will leak
+   state between pages, silently. There is also no root or end-of-document hook, so a plugin cannot
+   append output after traversal.
+5. **`ctx.report()` diagnostics never reach you.** They are collected per visitor and readable only
    through `ctx.getDiagnostics()` inside a plugin. `markdownToHtml` returns
    `{ html, frontmatter, data }` with no diagnostics field, and Astro's processor never reads them.
    A plugin that wants to surface warnings has to write them into `ctx.data`, which *is* returned as
