@@ -1,0 +1,56 @@
+{
+  "name": "satteri-breaks",
+  "version": "0.0.0",
+  "description": "S\u00e4tteri plugin to turn line breaks into <br> \u2014 a port of remark-breaks.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "mdast",
+    "markdown",
+    "mdx",
+    "astro",
+    "breaks",
+    "line-break",
+    "newline",
+    "remark-breaks"
+  ],
+  "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-breaks"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-breaks#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "prepublishOnly": "node ../../scripts/check-publishable.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

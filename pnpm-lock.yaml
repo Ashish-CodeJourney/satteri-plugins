@@ -74,6 +74,16 @@ importers:
         specifier: workspace:*
         version: link:../satteri-slug
 
+  packages/satteri-breaks:
+    dependencies:
+      satteri:
+        specifier: ^0.9.5
+        version: 0.9.5
+    devDependencies:
+      '@satteri-plugins/test-kit':
+        specifier: workspace:*
+        version: link:../../internal/test-kit
+
   packages/satteri-katex:
     dependencies:
       katex:
