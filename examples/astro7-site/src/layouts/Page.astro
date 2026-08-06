@@ -463,8 +463,9 @@ const base = import.meta.env.BASE_URL;
           satteri-plugins
         </a>
         <nav class="header-links">
+          <a class="ghost" href={base}>Plugins</a>
+          <a class="ghost" href={`${base}mdx/`}>MDX</a>
           <a class="ghost" href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>
-          <a class="ghost" href="https://www.npmjs.com/package/satteri-katex">npm</a>
           <button class="ghost" id="theme-toggle" type="button" aria-label="Switch theme">
             <svg
               class="icon-sun"
@@ -507,11 +508,20 @@ const base = import.meta.env.BASE_URL;
         <h1>{frontmatter.title}</h1>
         <p>{frontmatter.description}</p>
         <div class="pills">
-          <a class="pill" href="https://www.npmjs.com/package/satteri-slug">satteri-slug</a>
-          <a class="pill" href="https://www.npmjs.com/package/satteri-autolink-headings">
-            satteri-autolink-headings
-          </a>
-          <a class="pill" href="https://www.npmjs.com/package/satteri-katex">satteri-katex</a>
+          {
+            [
+              "satteri-slug",
+              "satteri-autolink-headings",
+              "satteri-katex",
+              "satteri-mathjax",
+              "satteri-breaks",
+              "satteri-github",
+              "satteri-sanitize",
+              "satteri-mdx-frontmatter",
+            ].map((name) => (
+              <a class="pill" href={`https://www.npmjs.com/package/${name}`}>{name}</a>
+            ))
+          }
         </div>
       </section>
 
