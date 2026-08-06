@@ -1,5 +1,12 @@
 # satteri-plugins
 
+[![CI](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/ci.yml)
+[![Release](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/release.yml/badge.svg)](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/release.yml)
+[![Example site](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/pages.yml/badge.svg)](https://ashish-codejourney.github.io/satteri-plugins)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](package.json)
+[![Types](https://img.shields.io/badge/types-included-3178c6.svg?logo=typescript&logoColor=white)](tsconfig.base.json)
+
 Ports of the most-used [unified](https://unifiedjs.com) (remark/rehype) plugins to
 [Sätteri](https://satteri.bruits.org), the Rust Markdown/MDX engine behind Astro 7.
 
@@ -9,16 +16,16 @@ each tested against the output of the plugin it replaces.
 
 ## Packages
 
-| Package | Replaces | What it does |
-| --- | --- | --- |
-| [`satteri-slug`](packages/satteri-slug) | `rehype-slug` | Adds `id` to every heading, via the same `github-slugger` |
-| [`satteri-autolink-headings`](packages/satteri-autolink-headings) | `rehype-autolink-headings` | Adds anchor links to headings |
-| [`satteri-katex`](packages/satteri-katex) | `rehype-katex` | Renders math with KaTeX |
-| [`satteri-sanitize`](packages/satteri-sanitize) | `rehype-sanitize` | Strips unsafe HTML, attributes and URLs |
-| [`satteri-breaks`](packages/satteri-breaks) | `remark-breaks` | Turns single newlines into `<br>` |
-| [`satteri-mathjax`](packages/satteri-mathjax) | `rehype-mathjax` | Renders math with MathJax |
-| [`satteri-github`](packages/satteri-github) | `remark-github` | Autolinks issues, mentions and SHAs |
-| [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) | `remark-mdx-frontmatter` | Exposes MDX frontmatter as exports |
+| Package | npm | Replaces | What it does |
+| --- | --- | --- | --- |
+| [`satteri-slug`](packages/satteri-slug) | [![npm](https://img.shields.io/npm/v/satteri-slug.svg)](https://www.npmjs.com/package/satteri-slug) | `rehype-slug` | Adds `id` to every heading, via the same `github-slugger` |
+| [`satteri-autolink-headings`](packages/satteri-autolink-headings) | [![npm](https://img.shields.io/npm/v/satteri-autolink-headings.svg)](https://www.npmjs.com/package/satteri-autolink-headings) | `rehype-autolink-headings` | Adds anchor links to headings |
+| [`satteri-katex`](packages/satteri-katex) | [![npm](https://img.shields.io/npm/v/satteri-katex.svg)](https://www.npmjs.com/package/satteri-katex) | `rehype-katex` | Renders math with KaTeX |
+| [`satteri-sanitize`](packages/satteri-sanitize) | [![npm](https://img.shields.io/npm/v/satteri-sanitize.svg)](https://www.npmjs.com/package/satteri-sanitize) | `rehype-sanitize` | Strips unsafe HTML, attributes and URLs |
+| [`satteri-breaks`](packages/satteri-breaks) | [![npm](https://img.shields.io/npm/v/satteri-breaks.svg)](https://www.npmjs.com/package/satteri-breaks) | `remark-breaks` | Turns single newlines into `<br>` |
+| [`satteri-mathjax`](packages/satteri-mathjax) | [![npm](https://img.shields.io/npm/v/satteri-mathjax.svg)](https://www.npmjs.com/package/satteri-mathjax) | `rehype-mathjax` | Renders math with MathJax |
+| [`satteri-github`](packages/satteri-github) | [![npm](https://img.shields.io/npm/v/satteri-github.svg)](https://www.npmjs.com/package/satteri-github) | `remark-github` | Autolinks issues, mentions and SHAs |
+| [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) | [![npm](https://img.shields.io/npm/v/satteri-mdx-frontmatter.svg)](https://www.npmjs.com/package/satteri-mdx-frontmatter) | `remark-mdx-frontmatter` | Exposes MDX frontmatter as exports |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -82,6 +89,23 @@ below.
 Sätteri passes raw HTML through unparsed, so Markdown from an untrusted source is an XSS vector by
 default. If any of your content is user-supplied, run
 [`satteri-sanitize`](packages/satteri-sanitize) last in your `hastPlugins`.
+
+### Supply chain
+
+Every package is published from CI by [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
+over OIDC. There is no long-lived npm token in this repository or in any maintainer's shell, so
+there is no token to steal.
+
+Releases carry [SLSA](https://slsa.dev) provenance attestations linking the tarball to the commit
+and workflow that built it. Verify them yourself:
+
+```sh
+npm audit signatures
+```
+
+The first `0.1.0` of `satteri-breaks`, `satteri-mathjax`, `satteri-github` and
+`satteri-mdx-frontmatter` was published by hand to bootstrap trusted publishing, so those four
+versions carry no attestation. Their next release does.
 
 To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
