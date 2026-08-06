@@ -26,8 +26,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - name: Build and verify the example site
+      - name: Verify the example site
         run: pnpm test:e2e
+        env:
+          SITE: https://ashish-codejourney.github.io
+          BASE: /satteri-plugins
+      # test:e2e builds the site several times over — once per maths renderer and
+      # once under a throwaway base path — so whatever it leaves in dist/ is the
+      # last variant it happened to check, not the site we mean to publish.
+      # Build the real one here, after verification and immediately before upload.
+      - name: Build the site that gets deployed
+        run: pnpm --filter @satteri-plugins/example-astro7-site build
         env:
           SITE: https://ashish-codejourney.github.io
           BASE: /satteri-plugins
