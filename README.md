@@ -15,6 +15,7 @@ each tested against the output of the plugin it replaces.
 | [`satteri-autolink-headings`](packages/satteri-autolink-headings) | `rehype-autolink-headings` | Adds anchor links to headings |
 | [`satteri-katex`](packages/satteri-katex) | `rehype-katex` | Renders math with KaTeX |
 | [`satteri-sanitize`](packages/satteri-sanitize) | `rehype-sanitize` | Strips unsafe HTML, attributes and URLs |
+| [`satteri-breaks`](packages/satteri-breaks) | `remark-breaks` | Turns single newlines into `<br>` |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -50,6 +51,7 @@ Sätteri does **not** generate heading ids on its own — that is what
 | `rehype-autolink-headings` | [`satteri-autolink-headings`](packages/satteri-autolink-headings) |
 | `rehype-katex` | [`satteri-katex`](packages/satteri-katex) |
 | `rehype-sanitize` | [`satteri-sanitize`](packages/satteri-sanitize) |
+| `remark-breaks` | [`satteri-breaks`](packages/satteri-breaks) |
 
 ### Already covered by the community
 
@@ -60,7 +62,6 @@ Sätteri does **not** generate heading ids on its own — that is what
 | `remark-toc` | `@bhdouglass/satteri-toc`, `pretty-toc` |
 | `rehype-mermaid` | `satteri-beautiful-mermaid`, `@xingwangzhe/satteri-mermaid` |
 | `rehype-github-alerts`, `remark-github-blockquote-alert` | `satteri-callouts` |
-| `remark-breaks` | `@minittupoyo/satteri-breaks` |
 | Code highlighting | `satteri-expressive-code` |
 | MDX auto-imports | `@bhdouglass/satteri-auto-imports`, `@xsynaptic/satteri-auto-import` |
 
@@ -95,6 +96,11 @@ both are invisible until your output is wrong. Astro composes the plugin list as
 3. **`satteri()` accepts only `mdastPlugins`, `hastPlugins` and `features`.** Anything else you pass
    it — `shikiConfig`, `gfm`, `smartypants` — is silently dropped. Those belong one level up, on
    `markdown`, alongside `processor`.
+4. **`ctx.report()` diagnostics never reach you.** They are collected per visitor and readable only
+   through `ctx.getDiagnostics()` inside a plugin. `markdownToHtml` returns
+   `{ html, frontmatter, data }` with no diagnostics field, and Astro's processor never reads them.
+   A plugin that wants to surface warnings has to write them into `ctx.data`, which *is* returned as
+   `result.data`, or print them itself.
 
 ```js
 export default defineConfig({
