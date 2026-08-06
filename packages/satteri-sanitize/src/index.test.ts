@@ -1,6 +1,6 @@
 import { render } from "@satteri-plugins/test-kit";
 import { describe, expect, it } from "vitest";
-import { satteriSanitize } from "./index.js";
+import { defaultAttributes, defaultProtocols, defaultTagNames, satteriSanitize } from "./index.js";
 
 type Options = Parameters<typeof satteriSanitize>[0];
 
@@ -221,6 +221,45 @@ describe("satteri-sanitize", () => {
     });
   });
 
+  describe("entities already present in the source", () => {
+    it("does not double-escape an entity in block raw text", async () => {
+      expect(await clean("<div>a &amp; b</div>")).toBe("<div>a &amp; b</div>");
+    });
+
+    it("does not double-escape a numeric entity in raw text", async () => {
+      expect(await clean("<div>&#x27;quoted&#x27;</div>")).toBe(
+        "<div>&#x27;quoted&#x27;</div>",
+      );
+    });
+
+    it("does not double-escape an entity in an attribute value", async () => {
+      expect(await clean('<a href="/x" title="a &amp; b">t</a>')).toBe(
+        '<p><a href="/x" title="a &amp; b">t</a></p>',
+      );
+    });
+
+    it("still escapes a bare ampersand that starts nothing", async () => {
+      expect(await clean("<div>a & b</div>")).toBe("<div>a &#x26; b</div>");
+    });
+
+    it("still escapes a bare angle bracket in raw text", async () => {
+      expect(await clean("<div>a < b</div>")).toContain("&#x3C;");
+    });
+
+    it("escapes an ampersand that starts a reference but never closes it", async () => {
+      // `&amp` without the semicolon is not a reference, and leaving it intact
+      // would let a bare ampersand through into the page.
+      expect(await clean("<div>a &amp b</div>")).toBe("<div>a &#x26;amp b</div>");
+    });
+
+    it("still neutralises a payload disguised with a partial entity", async () => {
+      const html = await clean('<div title="&ampx;"><script>alert(1)</script></div>');
+
+      expect(html).not.toContain("<script");
+      expect(html).not.toContain("alert(1)");
+    });
+  });
+
   describe("malformed input", () => {
     it("does not treat a quoted angle bracket as the end of a tag", async () => {
       const html = await clean(`<a href="x" title="a>b" onclick="alert(1)">t</a>`);
@@ -250,6 +289,27 @@ describe("satteri-sanitize", () => {
 
     it("handles an attribute with no value", async () => {
       expect(await clean("<div hidden>t</div>")).toBe("<div>t</div>");
+    });
+  });
+
+  describe("the exported defaults", () => {
+    it("exposes the default allowlist so it can be widened rather than retyped", () => {
+      expect(defaultTagNames).toContain("p");
+      expect(defaultTagNames).not.toContain("script");
+      expect(defaultAttributes["a"]).toContain("href");
+      expect(defaultProtocols["href"]).toContain("https");
+    });
+
+    it("keeps everything working when the defaults are spread into an option", async () => {
+      const html = await clean("<b>bold</b> and <mark>marked</mark>", {
+        tagNames: [...defaultTagNames, "mark"],
+      });
+
+      expect(html).toBe("<p><b>bold</b> and <mark>marked</mark></p>");
+    });
+
+    it("cannot be mutated by a caller", () => {
+      expect(() => (defaultTagNames as string[]).push("script")).toThrow();
     });
   });
 

@@ -1,6 +1,6 @@
 import { defineHastPlugin } from "satteri";
 import type { HastPluginInput } from "satteri";
-import { escapeHtml, serializeTag, tokenize } from "./html.js";
+import { escapePreservingEntities, serializeTag, tokenize } from "./html.js";
 import type { Tag } from "./html.js";
 import {
   ATTRIBUTES,
@@ -13,6 +13,36 @@ import {
   TAG_NAMES,
 } from "./schema.js";
 import { isAllowedUrl } from "./url.js";
+
+/**
+ * The default allowlist, exported so callers can widen it instead of retyping
+ * it. Widening is the common case: rendered maths, embeds and diagrams all emit
+ * elements the default list does not cover.
+ *
+ * ```js
+ * satteriSanitize({ tagNames: [...defaultTagNames, "math", "mrow"] })
+ * ```
+ *
+ * Frozen, so a caller cannot loosen the default for everyone else by mutating
+ * it in place.
+ */
+export const defaultTagNames: readonly string[] = Object.freeze([...TAG_NAMES]);
+
+/** Default per-element attribute allowlist. See {@link defaultTagNames}. */
+export const defaultAttributes: Readonly<Record<string, readonly string[]>> =
+  Object.freeze(
+    Object.fromEntries(
+      Object.entries(ATTRIBUTES).map(([tag, list]) => [tag, Object.freeze([...list])]),
+    ),
+  );
+
+/** Default protocol allowlist per URL attribute. See {@link defaultTagNames}. */
+export const defaultProtocols: Readonly<Record<string, readonly string[]>> =
+  Object.freeze(
+    Object.fromEntries(
+      Object.entries(PROTOCOLS).map(([attr, list]) => [attr, Object.freeze([...list])]),
+    ),
+  );
 
 export type SatteriSanitizeOptions = {
   /** Elements to keep. Anything else is unwrapped, keeping its children. */
@@ -124,7 +154,7 @@ export const satteriSanitize = ({
 
       for (const token of tokenize(html)) {
         if (token.kind === "text") {
-          if (dropDepth === 0) output += escapeHtml(token.value);
+          if (dropDepth === 0) output += escapePreservingEntities(token.value);
           continue;
         }
 

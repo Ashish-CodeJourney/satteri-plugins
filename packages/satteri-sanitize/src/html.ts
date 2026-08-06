@@ -28,6 +28,41 @@ const ESCAPES: Record<string, string> = {
 export const escapeHtml = (value: string): string =>
   value.replace(/[&<>"']/g, (character) => ESCAPES[character] ?? character);
 
+/** A character reference that is already encoded: named, decimal or hex. */
+const ENTITY = /&(?:[a-zA-Z][a-zA-Z0-9]*|#\d+|#[xX][0-9a-fA-F]+);/y;
+
+/**
+ * Escapes raw HTML that has already been through an HTML encoder once.
+ *
+ * The strings Sätteri hands to a `raw` node come straight from the document, so
+ * they still carry the author's character references. Escaping `&`
+ * unconditionally would turn `&amp;` into `&#x26;amp;` and show the entity to
+ * the reader. Only an `&` that does not begin a well-formed reference is
+ * escaped; a partial one like `&ampx;` is still encoded, so nothing can be
+ * smuggled through by leaving a reference unterminated.
+ */
+export const escapePreservingEntities = (value: string): string => {
+  let output = "";
+
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index] ?? "";
+
+    if (character === "&") {
+      ENTITY.lastIndex = index;
+      const entity = ENTITY.exec(value);
+      if (entity) {
+        output += entity[0];
+        index = ENTITY.lastIndex - 1;
+        continue;
+      }
+    }
+
+    output += ESCAPES[character] ?? character;
+  }
+
+  return output;
+};
+
 /**
  * Attribute values may contain `>`, so the tag body is matched with an
  * alternation that consumes quoted runs whole rather than stopping at the first
@@ -122,7 +157,7 @@ export const serializeTag = (
   if (tag.closing) return `</${tag.name}>`;
 
   const rendered = attributes
-    .map(([name, value]) => ` ${name}="${escapeHtml(value)}"`)
+    .map(([name, value]) => ` ${name}="${escapePreservingEntities(value)}"`)
     .join("");
 
   return `<${tag.name}${rendered}${tag.selfClosing ? " /" : ""}>`;
