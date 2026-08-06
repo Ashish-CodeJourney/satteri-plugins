@@ -1,7 +1,7 @@
 {
   "name": "satteri-slug",
   "version": "0.1.1",
-  "description": "Sätteri plugin to add `id` attributes to headings — a port of rehype-slug.",
+  "description": "S\u00e4tteri plugin to add `id` attributes to headings \u2014 a port of rehype-slug.",
   "keywords": [
     "satteri",
     "satteri-plugin",
@@ -15,6 +15,7 @@
     "rehype-slug"
   ],
   "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
@@ -35,6 +36,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
     "typecheck": "tsc -p tsconfig.json"

@@ -75,6 +75,8 @@ Sätteri passes raw HTML through unparsed, so Markdown from an untrusted source 
 default. If any of your content is user-supplied, run
 [`satteri-sanitize`](packages/satteri-sanitize) last in your `hastPlugins`.
 
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
+
 ## Using these with Astro 7
 
 Two things about Astro's Sätteri processor are worth knowing before you wire anything up, because

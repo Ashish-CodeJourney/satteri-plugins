@@ -1,7 +1,7 @@
 {
   "name": "satteri-katex",
   "version": "0.1.1",
-  "description": "Sätteri plugin to render math with KaTeX — a port of rehype-katex.",
+  "description": "S\u00e4tteri plugin to render math with KaTeX \u2014 a port of rehype-katex.",
   "keywords": [
     "satteri",
     "satteri-plugin",
@@ -16,6 +16,7 @@
     "rehype-katex"
   ],
   "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
@@ -36,6 +37,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
     "typecheck": "tsc -p tsconfig.json"

@@ -1,7 +1,7 @@
 {
   "name": "satteri-sanitize",
   "version": "0.0.0",
-  "description": "Sätteri plugin to sanitize HTML in Markdown — a port of rehype-sanitize.",
+  "description": "S\u00e4tteri plugin to sanitize HTML in Markdown \u2014 a port of rehype-sanitize.",
   "keywords": [
     "satteri",
     "satteri-plugin",
@@ -15,6 +15,7 @@
     "rehype-sanitize"
   ],
   "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
@@ -30,7 +31,14 @@
       "default": "./dist/index.mjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown src/index.ts --dts --format esm",
     "typecheck": "tsc -p tsconfig.json"
