@@ -80,9 +80,19 @@ Sätteri does **not** generate heading ids on its own — that is what
 
 ### Not ported yet
 
-`rehype-highlight`, `remark-validate-links`, and a `unified` compatibility shim. Contributions
-welcome. Note that `remark-validate-links` needs a reporting design first: see the diagnostics point
-below.
+| Plugin | Status |
+| --- | --- |
+| `remark-validate-links` | Next up. Report through `ctx.data`, which is returned as `result.data`; source positions are on every node already, so no opt-in is needed |
+| `unified` compatibility shim | Wanted, but Sätteri's one-pass model means a documented support matrix rather than a drop-in adapter |
+
+Contributions welcome.
+
+### Not needed
+
+`rehype-highlight` — Astro 7 already highlights code blocks with Shiki, with no plugin at all. Port
+this only if you have existing highlight.js CSS themes to keep. For richer rendering, see
+[`satteri-expressive-code`](https://www.npmjs.com/package/satteri-expressive-code) or
+[Treelight](https://www.npmjs.com/package/@treelight/plugin-astro).
 
 ## Security
 
