@@ -1,6 +1,6 @@
 {
   "name": "satteri-validate-links",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sätteri plugin to check that links point at something that exists — a port of remark-validate-links.",
   "keywords": [
     "satteri",
