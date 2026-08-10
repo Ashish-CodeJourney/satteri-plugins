@@ -143,6 +143,40 @@ describe("satteri-autolink-headings", () => {
     );
   });
 
+  it("puts the link after the heading inside a group element", async () => {
+    expect(
+      await link("## Hello World", {
+        behavior: "after",
+        content: text("#"),
+        group: {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["g"] },
+          children: [],
+        },
+      }),
+    ).toBe(
+      '<div class="g"><h2 id="hello-world">Hello World</h2>' +
+        '<a href="#hello-world">#</a></div>',
+    );
+  });
+
+  it.each(["before", "after"] as const)(
+    "applies headingProperties when the link is a sibling (%s)",
+    async (behavior) => {
+      // before and after splice the link in beside the heading rather than
+      // rebuilding it, so the heading is mutated in place instead.
+      const html = await link("## Hello World", {
+        behavior,
+        content: text("#"),
+        headingProperties: { className: ["heading"] },
+      });
+
+      expect(html).toContain('<h2 id="hello-world" class="heading">Hello World</h2>');
+      expect(html).toContain('<a href="#hello-world">#</a>');
+    },
+  );
+
   it("links every heading level by default", async () => {
     expect(await link("## A\n\n### B", { content: text("#") })).toBe(
       [

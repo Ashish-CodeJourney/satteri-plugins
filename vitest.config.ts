@@ -13,5 +13,14 @@ export default defineConfig({
   },
   test: {
     include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],
+    coverage: {
+      provider: "v8",
+      // Only published plugin code. The test kit is exercised by every package
+      // that uses it, and measuring it would report on the harness, not on what
+      // ships.
+      include: ["packages/*/src/**"],
+      exclude: ["**/*.test.ts"],
+      reporter: ["text", "html", "lcov"],
+    },
   },
 });
