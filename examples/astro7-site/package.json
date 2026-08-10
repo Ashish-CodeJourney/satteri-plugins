@@ -1,6 +1,6 @@
 {
   "name": "@satteri-plugins/example-astro7-site",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "type": "module",
   "scripts": {
