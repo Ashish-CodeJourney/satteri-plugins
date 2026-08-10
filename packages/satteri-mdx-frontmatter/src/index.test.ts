@@ -180,6 +180,16 @@ describe("satteri-mdx-frontmatter", () => {
       expect(Object.keys(value as object)).toEqual(["__proto__"]);
     });
 
+    it("serialises an invalid Date without emitting broken JavaScript", async () => {
+      const code = await compile(doc(`ignored`), {
+        parsers: { yaml: () => ({ when: new Date("not a date") }) },
+      });
+
+      // `new Date("Invalid Date")` would not round-trip, so NaN is written out.
+      expect(exportStatement(code)).toBe(`export const frontmatter = { "when": new Date(NaN) };`);
+      expect(Number.isNaN((exportedValue(code) as { when: Date }).when.getTime())).toBe(true);
+    });
+
     it("serialises a Date as a Date rather than a string", async () => {
       const code = await compile(doc(`ignored`), {
         parsers: { yaml: () => ({ when: new Date("2020-01-01T00:00:00.000Z") }) },

@@ -348,6 +348,16 @@ describe("satteri-sanitize", () => {
     });
   });
 
+  describe("markup nested inside dropped content", () => {
+    it("drops an otherwise allowed tag that sits inside a script", async () => {
+      // <b> is allowed everywhere else, but inside dropped content it is part of
+      // the payload, not of the document.
+      expect(await clean("<div><script><b>bold</b>alert(1)</script>after</div>")).toBe(
+        "<div>after</div>",
+      );
+    });
+  });
+
   describe("the class attribute", () => {
     it("keeps only the markers the default schema is there to carry", async () => {
       // code, pre and span allow className in the default schema, but the value

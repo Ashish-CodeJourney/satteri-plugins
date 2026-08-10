@@ -47,10 +47,12 @@ const headingIds = (source: string): ReadonlySet<string> => {
   }
 
   for (; index < lines.length; index += 1) {
+    /* v8 ignore next -- unreachable: index is bounded by lines.length */
     const line = lines[index] ?? "";
     const opensOrCloses = CODE_FENCE.exec(line)?.[1];
 
     if (fence !== undefined) {
+      /* v8 ignore next -- unreachable: a matched fence is never the empty string */
       if (opensOrCloses?.startsWith(fence[0] ?? "") === true) fence = undefined;
       previous = "";
       continue;
@@ -64,6 +66,7 @@ const headingIds = (source: string): ReadonlySet<string> => {
 
     const atx = ATX_HEADING.exec(line);
     if (atx !== null) {
+      /* v8 ignore next -- unreachable: the regex cannot match without capturing the heading text */
       ids.add(slugger.slug(atx[1] ?? ""));
       previous = "";
       continue;

@@ -21,6 +21,7 @@ export const satteriBreaks = (): MdastPluginInput =>
       // `replaceNode` cannot encode an array containing a `break`, but
       // `insertAfter` can, so the node is narrowed to its first line and the
       // remaining lines are spliced in after it.
+      /* v8 ignore next -- unreachable: String.split always yields at least one element */
       ctx.replaceNode(node, { type: "text", value: first ?? "" });
       ctx.insertAfter(
         node,

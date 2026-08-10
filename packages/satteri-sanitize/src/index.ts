@@ -160,7 +160,7 @@ export const satteriSanitize = ({
 
         if (DROP_CONTENT.includes(token.name)) {
           if (token.closing) dropDepth = Math.max(0, dropDepth - 1);
-          else if (!token.selfClosing) dropDepth += 1;
+          else dropDepth += 1;
           continue;
         }
 

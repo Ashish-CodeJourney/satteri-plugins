@@ -11,7 +11,6 @@ export type Tag = {
   readonly kind: "tag";
   readonly name: string;
   readonly closing: boolean;
-  readonly selfClosing: boolean;
   readonly attributes: ReadonlyArray<readonly [string, string]>;
 };
 
@@ -42,6 +41,7 @@ export const escapePreservingEntities = (value: string): string => {
   let output = "";
 
   for (let index = 0; index < value.length; index += 1) {
+    /* v8 ignore next -- unreachable: index is bounded by value.length */
     const character = value[index] ?? "";
 
     if (character === "&") {
@@ -65,7 +65,10 @@ export const escapePreservingEntities = (value: string): string => {
  * alternation that consumes quoted runs whole rather than stopping at the first
  * `>`.
  */
-const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9:-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)(\/?)>/y;
+// The body group is greedy and `[^>"']` matches `/`, so a trailing slash on a
+// self-closing tag is swallowed by it. Nothing downstream needs to know: HTML5
+// void elements are serialized without one.
+const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9:-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/y;
 const COMMENT = /<!--[\s\S]*?-->/y;
 const DOCTYPE_OR_PI = /<[!?][^>]*>/y;
 const ATTRIBUTE = /([a-zA-Z_:][a-zA-Z0-9_.:-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
@@ -76,6 +79,7 @@ const parseAttributes = (source: string): Array<readonly [string, string]> => {
 
   for (let match = ATTRIBUTE.exec(source); match; match = ATTRIBUTE.exec(source)) {
     const [, name, doubleQuoted, singleQuoted, unquoted] = match;
+    /* v8 ignore next -- unreachable: the regex cannot match without capturing a name */
     if (name === undefined) continue;
     attributes.push([name, doubleQuoted ?? singleQuoted ?? unquoted ?? ""]);
   }
@@ -117,12 +121,11 @@ export const tokenize = (html: string): Token[] => {
     const tag = TAG.exec(html);
     if (tag) {
       flush();
-      const [, closing, name = "", body = "", selfClosing] = tag;
+      const [, closing, name = "", body = ""] = tag;
       tokens.push({
         kind: "tag",
         name: name.toLowerCase(),
         closing: closing === "/",
-        selfClosing: selfClosing === "/",
         attributes: parseAttributes(body),
       });
       index = TAG.lastIndex;
@@ -157,5 +160,5 @@ export const serializeTag = (
     .map(([name, value]) => ` ${name}="${escapePreservingEntities(value)}"`)
     .join("");
 
-  return `<${tag.name}${rendered}${tag.selfClosing ? " /" : ""}>`;
+  return `<${tag.name}${rendered}>`;
 };

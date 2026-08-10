@@ -143,6 +143,21 @@ describe("satteri-autolink-headings", () => {
     );
   });
 
+  it("accepts content given as several nodes", async () => {
+    expect(
+      await link("## Hello World", {
+        content: [
+          text("("),
+          { type: "element", tagName: "em", properties: {}, children: [text("link")] },
+          text(")"),
+        ],
+      }),
+    ).toBe(
+      '<h2 id="hello-world"><a aria-hidden="true" tabindex="-1" href="#hello-world">' +
+        "(<em>link</em>)</a>Hello World</h2>",
+    );
+  });
+
   it("puts the link after the heading inside a group element", async () => {
     expect(
       await link("## Hello World", {

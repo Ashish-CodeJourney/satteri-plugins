@@ -21,12 +21,7 @@ export default defineConfig({
       include: ["packages/*/src/**"],
       exclude: ["**/*.test.ts"],
       reporter: ["text", "html", "lcov"],
-      // A ratchet, not a target. What is left uncovered is defensive: `?? ""`
-      // fallbacks that exist because `noUncheckedIndexedAccess` types an index
-      // as possibly undefined, on paths where the regex that produced the index
-      // guarantees it is not. Raise these as real coverage goes up; never lower
-      // them to make a build pass.
-      thresholds: { statements: 99.8, branches: 94.8, functions: 100, lines: 99.8 },
+      thresholds: { statements: 100, branches: 100, functions: 100, lines: 100 },
     },
   },
 });

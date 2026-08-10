@@ -160,6 +160,7 @@ const replaceReference =
   (repository: Repository): Replacer =>
   (match, input) => {
     const [, user, specificProject, no, hash] = match;
+    /* v8 ignore next -- unreachable: the regex cannot match without capturing a user */
     if (!user) return undefined;
     if (OPENS_REFERENCE.test(before(input, match))) return undefined;
     if (/\w/.test(after(input, match))) return undefined;
@@ -177,6 +178,7 @@ const replaceReference =
         text(`${scope}#${no}`),
       ]);
     }
+    /* v8 ignore next -- unreachable: the regex cannot match without capturing a hash */
     if (!hash) return undefined;
 
     return link(`${GITHUB}/${user}/${project}/commit/${hash}`, [
@@ -204,6 +206,7 @@ const replaceIssue =
   (repository: Repository): Replacer =>
   (match, input) => {
     const no = match[1];
+    /* v8 ignore next -- unreachable: the regex cannot match without capturing a number */
     if (!no) return undefined;
     if (/\w/.test(before(input, match))) return undefined;
     if (/\w/.test(after(input, match))) return undefined;
@@ -222,7 +225,9 @@ const replaceCompare =
   (repository: Repository): Replacer =>
   (match, input) => {
     const [value, base, compare] = match;
+    /* v8 ignore next -- unreachable: the regex cannot match without capturing both sides of the range */
     if (!base || !compare) return undefined;
+    /* v8 ignore next -- unreachable: a full compare range is never one of the five denied English words */
     if (isHashBoundaryBad(match, input) || DENIED_HASHES.has(value)) return undefined;
 
     const { user, project } = repository;

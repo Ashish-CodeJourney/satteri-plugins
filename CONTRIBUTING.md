@@ -9,11 +9,14 @@ more than the code style — please read the method section before opening a PR.
 `pnpm test:coverage` runs the suite and reports coverage of `packages/*/src`. CI runs the same
 command and fails if it drops below the thresholds in `vitest.config.ts`.
 
-Those thresholds are a ratchet rather than a target: raise them as coverage improves, never lower
-them to make a build pass. The gap to 100% is defensive code — `?? ""` fallbacks that exist because
-`noUncheckedIndexedAccess` types an indexed access as possibly `undefined` on paths where the regex
-that produced the index guarantees otherwise. If you find a way to reach one of those branches, it
-is a bug worth a test rather than a line worth ignoring.
+Coverage is at 100% of statements, branches, functions and lines, and the thresholds are set there.
+New code needs tests before it lands.
+
+A handful of lines carry `/* v8 ignore next -- unreachable: … */`. Every one is a defensive fallback
+that exists because `noUncheckedIndexedAccess` types an indexed access or a regex capture group as
+possibly `undefined`, on a path where the pattern that produced it guarantees otherwise. The reason
+is written out on each. Do not add one to make a build pass: if you can reach the branch, it is a
+bug worth a test.
 
 ## Getting started
 

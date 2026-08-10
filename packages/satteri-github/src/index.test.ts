@@ -69,6 +69,11 @@ describe("satteri-github", () => {
       );
     });
 
+    it("does not link a reference that runs straight into a word", async () => {
+      // `user/project#12x` is not issue 12 followed by an x, so it is left be.
+      expect(await gh("user/project#12x")).toBe("<p>user/project#12x</p>");
+    });
+
     it("keeps the full repository in the text for another repository", async () => {
       expect(await gh("other/repo#12")).toBe(
         '<p><a href="https://github.com/other/repo/issues/12">other/repo#12</a></p>',

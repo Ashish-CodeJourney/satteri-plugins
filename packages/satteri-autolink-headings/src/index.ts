@@ -106,6 +106,7 @@ export const satteriAutolinkHeadings = ({
 
         if (behavior === "wrap") {
           return rebuiltHeading([
+            /* v8 ignore next -- unreachable: `anchor` always sets `href`, so properties is never undefined */
             anchor(link.properties ?? {}, [...heading.children, ...linkContent]),
           ]);
         }

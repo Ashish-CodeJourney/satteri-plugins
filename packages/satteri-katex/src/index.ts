@@ -21,6 +21,7 @@ const ESCAPES: Record<string, string> = {
 };
 
 const escapeHtml = (value: string): string =>
+  /* v8 ignore next -- unreachable: the regex only matches characters that are keys of ESCAPES */
   value.replace(/[&<>"']/g, (character) => ESCAPES[character] ?? character);
 
 const errorSpan = (source: string, message: string, color: string): string =>
