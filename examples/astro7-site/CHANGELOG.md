@@ -1,5 +1,12 @@
 # @satteri-plugins/example-astro7-site
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [edb8524]
+  - satteri-sanitize@0.1.2
+
 ## 0.0.3
 
 ### Patch Changes
