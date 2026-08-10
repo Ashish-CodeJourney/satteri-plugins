@@ -1,13 +1,33 @@
+import { mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { compile } from "@satteri-plugins/test-kit";
 import { describe, expect, it } from "vitest";
 import { satteriValidateLinks } from "./index.js";
 
+type Summary = { url: string; reason: string };
+
 /** The findings the plugin collected, with positions dropped for readability. */
-const findingsFor = async (markdown: string): Promise<Array<{ url: string; reason: string }>> => {
-  const { data } = await compile(markdown, { mdastPlugins: [satteriValidateLinks()] });
-  const findings = (data as { validateLinks?: Array<{ url: string; reason: string }> })
-    .validateLinks;
+const findingsFor = async (markdown: string, fileURL?: URL): Promise<Summary[]> => {
+  const { data } = await compile(markdown, {
+    mdastPlugins: [satteriValidateLinks()],
+    ...(fileURL === undefined ? {} : { fileURL }),
+  });
+  const findings = (data as { validateLinks?: Summary[] }).validateLinks;
   return (findings ?? []).map(({ url, reason }) => ({ url, reason }));
+};
+
+/**
+ * Writes a directory of files and returns the URL a document in it would have.
+ * Link checking is about the filesystem, so these tests use a real one.
+ */
+const withFiles = async (files: Record<string, string>): Promise<(name: string) => URL> => {
+  const dir = await mkdtemp(join(tmpdir(), "validate-links-"));
+  for (const [name, content] of Object.entries(files)) {
+    await writeFile(join(dir, name), content, "utf8");
+  }
+  return (name: string) => pathToFileURL(join(dir, name));
 };
 
 describe("links to a heading in the same document", () => {
@@ -54,6 +74,15 @@ describe("links to a heading in the same document", () => {
     expect(await findingsFor("Underlined\n==========\n\n[a](#underlined)\n")).toEqual([]);
   });
 
+  it("does not treat a thematic break as a setext underline", async () => {
+    // `---` on its own, with a blank line above, is a horizontal rule.
+    const markdown = "Some text\n\n---\n\n[a](#some-text)\n";
+
+    expect(await findingsFor(markdown)).toEqual([
+      { url: "#some-text", reason: 'no heading in this document has the id "some-text"' },
+    ]);
+  });
+
   it("does not mistake the close of frontmatter for a setext underline", async () => {
     // `title: x` sits directly above `---`, which is the setext underline shape.
     const markdown = "---\ntitle: x\n---\n\n[a](#title-x)\n";
@@ -61,6 +90,54 @@ describe("links to a heading in the same document", () => {
     expect(await findingsFor(markdown)).toEqual([
       { url: "#title-x", reason: 'no heading in this document has the id "title-x"' },
     ]);
+  });
+});
+
+describe("links to another file", () => {
+  it("reports a file that does not exist", async () => {
+    const url = await withFiles({ "doc.md": "" });
+
+    expect(await findingsFor("[a](./missing.md)\n", url("doc.md"))).toEqual([
+      { url: "./missing.md", reason: "./missing.md does not exist" },
+    ]);
+  });
+
+  it("accepts a file that exists", async () => {
+    const url = await withFiles({ "doc.md": "", "other.md": "# Hi\n" });
+
+    expect(await findingsFor("[a](./other.md)\n", url("doc.md"))).toEqual([]);
+  });
+
+  it("resolves relative to the linking document, not the process", async () => {
+    const url = await withFiles({ "doc.md": "", "other.md": "" });
+
+    expect(await findingsFor("[a](other.md)\n", url("doc.md"))).toEqual([]);
+  });
+
+  it("reports an anchor missing from a file that does exist", async () => {
+    const url = await withFiles({ "doc.md": "", "other.md": "# Present\n" });
+
+    expect(await findingsFor("[a](./other.md#absent)\n", url("doc.md"))).toEqual([
+      { url: "./other.md#absent", reason: './other.md has no heading with the id "absent"' },
+    ]);
+  });
+
+  it("accepts an anchor present in another file", async () => {
+    const url = await withFiles({ "doc.md": "", "other.md": "# Present\n" });
+
+    expect(await findingsFor("[a](./other.md#present)\n", url("doc.md"))).toEqual([]);
+  });
+
+  it("does not check anchors in a file it cannot read as markdown", async () => {
+    const url = await withFiles({ "doc.md": "", "logo.png": "not markdown" });
+
+    expect(await findingsFor("[a](./logo.png#anything)\n", url("doc.md"))).toEqual([]);
+  });
+
+  it("checks nothing when the document has no fileURL", async () => {
+    // Sätteri leaves fileURL undefined unless the caller supplies it, and
+    // without it there is nothing to resolve a relative path against.
+    expect(await findingsFor("[a](./missing.md)\n")).toEqual([]);
   });
 });
 
@@ -72,7 +149,23 @@ describe("links it has no business checking", () => {
     ["mailto:nobody@example.com"],
     ["tel:+1"],
     ["ftp://example.com/x"],
-  ])("leaves %s alone", async (url) => {
-    expect(await findingsFor(`[a](${url})\n`)).toEqual([]);
+  ])("leaves %s alone even with a document to resolve against", async (target) => {
+    // The fileURL matters: without one every link returns early, and this would
+    // pass whether or not the plugin knows what an external link is.
+    const url = await withFiles({ "doc.md": "" });
+
+    expect(await findingsFor(`[a](${target})\n`, url("doc.md"))).toEqual([]);
+  });
+
+  it("leaves an empty destination alone", async () => {
+    const url = await withFiles({ "doc.md": "" });
+
+    expect(await findingsFor("[a]()\n", url("doc.md"))).toEqual([]);
+  });
+
+  it("leaves a trailing empty anchor alone", async () => {
+    const url = await withFiles({ "doc.md": "", "other.md": "# Present\n" });
+
+    expect(await findingsFor("[a](./other.md#)\n", url("doc.md"))).toEqual([]);
   });
 });

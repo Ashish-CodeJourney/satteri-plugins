@@ -51,7 +51,8 @@
     "satteri": "^0.9.5"
   },
   "devDependencies": {
-    "@satteri-plugins/test-kit": "workspace:*"
+    "@satteri-plugins/test-kit": "workspace:*",
+    "@types/node": "^22.10.2"
   },
   "engines": {
     "node": ">=20"

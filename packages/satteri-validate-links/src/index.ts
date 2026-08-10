@@ -1,3 +1,5 @@
+import { readFile, stat } from "node:fs/promises";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import GithubSlugger from "github-slugger";
 import { defineMdastPlugin } from "satteri";
 import type { MdastPluginInput } from "satteri";
@@ -79,26 +81,75 @@ const headingIds = (source: string): ReadonlySet<string> => {
   return ids;
 };
 
+/** Anything with a scheme, and protocol-relative URLs, belong to the network. */
+const isExternal = (url: string): boolean => url.startsWith("//") || /^[a-zA-Z][\w+.-]*:/.test(url);
+
+/** Extensions worth reading back to look for a heading. */
+const MARKDOWN = new Set([".md", ".mdx", ".markdown"]);
+
+const isMarkdown = (path: string): boolean => {
+  const dot = path.lastIndexOf(".");
+  return dot !== -1 && MARKDOWN.has(path.slice(dot).toLowerCase());
+};
+
+const exists = async (path: string): Promise<boolean> => {
+  try {
+    await stat(path);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const satteriValidateLinks = (): MdastPluginInput => () => {
   let ids: ReadonlySet<string> | undefined;
+  /** Heading ids per resolved path, so a file linked to twice is read once. */
+  const idsByPath = new Map<string, ReadonlySet<string>>();
 
   return defineMdastPlugin({
     name: "satteri-validate-links",
-    link(node, ctx) {
+    async link(node, ctx) {
+      const { url } = node;
       // A bare "#" is a link to the top of the page, not to a heading.
-      if (!node.url.startsWith("#") || node.url === "#") return;
-
-      ids ??= headingIds(ctx.source);
-      const id = decodeURIComponent(node.url.slice(1));
-      if (ids.has(id)) return;
+      if (url === "#" || isExternal(url)) return;
 
       const data = ctx.data as { validateLinks?: Finding[] };
-      const findings = (data.validateLinks ??= []);
-      findings.push({
-        url: node.url,
-        reason: `no heading in this document has the id "${id}"`,
-        position: node.position,
-      });
+      const report = (reason: string): void => {
+        const findings = (data.validateLinks ??= []);
+        findings.push({ url, reason, position: node.position });
+      };
+
+      if (url.startsWith("#")) {
+        ids ??= headingIds(ctx.source);
+        const id = decodeURIComponent(url.slice(1));
+        if (!ids.has(id)) report(`no heading in this document has the id "${id}"`);
+        return;
+      }
+
+      // Without a fileURL there is nothing to resolve a relative path against.
+      if (ctx.fileURL === undefined) return;
+
+      const hash = url.indexOf("#");
+      const target = hash === -1 ? url : url.slice(0, hash);
+      const anchor = hash === -1 ? undefined : decodeURIComponent(url.slice(hash + 1));
+      if (target === "") return;
+
+      const path = fileURLToPath(new URL(target, ctx.fileURL));
+      if (!(await exists(path))) {
+        report(`${target} does not exist`);
+        return;
+      }
+
+      if (anchor === undefined || anchor === "" || !isMarkdown(path)) return;
+
+      let known = idsByPath.get(path);
+      if (known === undefined) {
+        known = headingIds(await readFile(path, "utf8"));
+        idsByPath.set(path, known);
+      }
+
+      if (!known.has(anchor)) report(`${target} has no heading with the id "${anchor}"`);
     },
   });
 };
+
