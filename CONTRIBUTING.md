@@ -4,6 +4,17 @@ Thanks for considering a contribution. This repo ports [unified](https://unified
 (remark/rehype) plugins to [Sätteri](https://satteri.bruits.org), and the porting method matters
 more than the code style — please read the method section before opening a PR.
 
+## Coverage
+
+`pnpm test:coverage` runs the suite and reports coverage of `packages/*/src`. CI runs the same
+command and fails if it drops below the thresholds in `vitest.config.ts`.
+
+Those thresholds are a ratchet rather than a target: raise them as coverage improves, never lower
+them to make a build pass. The gap to 100% is defensive code — `?? ""` fallbacks that exist because
+`noUncheckedIndexedAccess` types an indexed access as possibly `undefined` on paths where the regex
+that produced the index guarantees otherwise. If you find a way to reach one of those branches, it
+is a bug worth a test rather than a line worth ignoring.
+
 ## Getting started
 
 ```sh
