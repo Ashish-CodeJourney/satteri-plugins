@@ -414,6 +414,12 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
         padding-left: 1.2rem;
       }
 
+      .broken-links .demo-note {
+        margin: 0.6rem 0 0;
+        color: var(--fg-muted);
+        font-size: 0.85rem;
+      }
+
       .broken-links code {
         background: var(--bg-sunken);
         padding: 0.1em 0.35em;
@@ -560,7 +566,9 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
           brokenLinks.length > 0 && (
             <aside class="broken-links">
               <strong>
-                {brokenLinks.length} broken link{brokenLinks.length === 1 ? "" : "s"} on this page
+                satteri-validate-links found {brokenLinks.length} broken link{
+                  brokenLinks.length === 1 ? "" : "s"
+                } on this page
               </strong>
               <ul>
                 {brokenLinks.map((finding) => (
@@ -569,6 +577,9 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
                   </li>
                 ))}
               </ul>
+              <p class="demo-note">
+                Deliberate: the link below is broken so the plugin has something to report.
+              </p>
             </aside>
           )
         }
