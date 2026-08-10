@@ -143,6 +143,21 @@ describe("satteri-sanitize", () => {
       );
     });
 
+    it("does not crash on a character reference outside the unicode range", async () => {
+      // String.fromCodePoint throws RangeError above 0x10FFFF, and the value is
+      // finite so a Number.isFinite guard does not catch it. Untrusted markdown
+      // must not be able to abort the build.
+      expect(await clean('<a href="&#99999999999;x">t</a>')).toContain("t");
+    });
+
+    it("does not crash on an out-of-range hex character reference", async () => {
+      expect(await clean('<a href="&#xFFFFFFFF;x">t</a>')).toContain("t");
+    });
+
+    it("leaves a colon that belongs to a path rather than a scheme", async () => {
+      expect(await clean("[t](/a:b)")).toBe('<p><a href="/a:b">t</a></p>');
+    });
+
     it("keeps an allowed protocol split by a control character", async () => {
       // Browsers strip tabs and newlines inside a scheme before dispatching, so
       // ht<tab>tps is https to them and must be to us.
@@ -330,6 +345,52 @@ describe("satteri-sanitize", () => {
       expect(await clean("[mail](mailto:a@b.com)", { protocols: { href: ["https"] } })).toBe(
         "<p><a>mail</a></p>",
       );
+    });
+  });
+
+  describe("the class attribute", () => {
+    it("keeps only the markers the default schema is there to carry", async () => {
+      // code, pre and span allow className in the default schema, but the value
+      // is filtered to Sätteri's own language-* and math* markers.
+      expect(await clean('<code class="language-js danger">x</code>')).toBe(
+        '<p><code class="language-js">x</code></p>',
+      );
+    });
+
+    it("keeps a math marker on a span", async () => {
+      expect(await clean('<span class="math danger">x</span>')).toBe(
+        '<p><span class="math">x</span></p>',
+      );
+    });
+
+    it("drops the attribute entirely when nothing survives the filter", async () => {
+      expect(await clean('<pre class="danger other">x</pre>')).toBe("<pre>x</pre>");
+    });
+
+    it("leaves the value untouched when the caller allows class themselves", async () => {
+      expect(await clean('<p class="danger other">x</p>', { attributes: { p: ["class"] } })).toBe(
+        '<p class="danger other">x</p>',
+      );
+    });
+
+    it("accepts className as the caller's spelling of class", async () => {
+      expect(await clean('<p class="danger">x</p>', { attributes: { p: ["className"] } })).toBe(
+        '<p class="danger">x</p>',
+      );
+    });
+
+    it("drops class on an element the schema does not allow it on", async () => {
+      expect(await clean('<p class="language-js">x</p>')).toBe("<p>x</p>");
+    });
+  });
+
+  describe("document-level syntax", () => {
+    it("removes a doctype", async () => {
+      expect(await clean("<!DOCTYPE html>\n<p>x</p>")).toBe("<p>x</p>");
+    });
+
+    it("removes a processing instruction", async () => {
+      expect(await clean('<?php echo "x"; ?>\n<p>y</p>')).toBe("<p>y</p>");
     });
   });
 });

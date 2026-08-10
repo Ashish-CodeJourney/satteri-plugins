@@ -25,9 +25,6 @@ const ESCAPES: Record<string, string> = {
   "'": "&#x27;",
 };
 
-export const escapeHtml = (value: string): string =>
-  value.replace(/[&<>"']/g, (character) => ESCAPES[character] ?? character);
-
 /** A character reference that is already encoded: named, decimal or hex. */
 const ENTITY = /&(?:[a-zA-Z][a-zA-Z0-9]*|#\d+|#[xX][0-9a-fA-F]+);/y;
 
