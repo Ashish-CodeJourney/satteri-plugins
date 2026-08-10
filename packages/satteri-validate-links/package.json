@@ -1,0 +1,59 @@
+{
+  "name": "satteri-validate-links",
+  "version": "0.0.0",
+  "description": "Sätteri plugin to check that links point at something that exists — a port of remark-validate-links.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "mdast",
+    "markdown",
+    "mdx",
+    "astro",
+    "links",
+    "validate",
+    "broken-links",
+    "remark-validate-links"
+  ],
+  "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-validate-links"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-validate-links#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "prepublishOnly": "node ../../scripts/check-publishable.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "github-slugger": "^2.0.0"
+  },
+  "peerDependencies": {
+    "satteri": "^0.9.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
