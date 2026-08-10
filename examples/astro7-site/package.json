@@ -27,6 +27,7 @@
     "satteri-mathjax": "workspace:*",
     "satteri-mdx-frontmatter": "workspace:*",
     "satteri-sanitize": "workspace:*",
-    "satteri-slug": "workspace:*"
+    "satteri-slug": "workspace:*",
+    "satteri-validate-links": "workspace:*"
   }
 }

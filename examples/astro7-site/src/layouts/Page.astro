@@ -1,6 +1,10 @@
 ---
 const { frontmatter } = Astro.props;
 
+// Written by satteri-validate-links. Astro returns the frontmatter object it
+// passed into the compile, which is the only route a plugin has to the page.
+const brokenLinks = frontmatter.validateLinks ?? [];
+
 // BASE_URL carries no trailing slash when the site is deployed under a base
 // path, so concatenating onto it yields "/satteri-pluginsmdx/". Join instead.
 const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/${path}`;
@@ -393,6 +397,29 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
         overflow-y: hidden;
       }
 
+      /* ---------- broken links ---------- */
+
+      .broken-links {
+        margin: 2rem 0 0;
+        padding: 0.9rem 1.1rem;
+        border: 1px solid var(--line);
+        border-left: 3px solid #d97706;
+        border-radius: 10px;
+        background: var(--bg-raised);
+        font-size: 0.9rem;
+      }
+
+      .broken-links ul {
+        margin: 0.5rem 0 0;
+        padding-left: 1.2rem;
+      }
+
+      .broken-links code {
+        background: var(--bg-sunken);
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+      }
+
       /* ---------- about + footer ---------- */
 
       .about {
@@ -529,6 +556,23 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
       </section>
 
       <main>
+        {
+          brokenLinks.length > 0 && (
+            <aside class="broken-links">
+              <strong>
+                {brokenLinks.length} broken link{brokenLinks.length === 1 ? "" : "s"} on this page
+              </strong>
+              <ul>
+                {brokenLinks.map((finding) => (
+                  <li>
+                    <code>{finding.url}</code> — {finding.reason}
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          )
+        }
+
         <article>
           <slot />
         </article>

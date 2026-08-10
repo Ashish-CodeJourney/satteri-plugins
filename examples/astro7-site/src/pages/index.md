@@ -83,6 +83,14 @@ The block below contains a script, an event handler and a `javascript:` link. No
 
 Ampersands the author already encoded, like AT&amp;T, stay encoded rather than being escaped a second time.
 
+## Broken links
+
+`satteri-validate-links` checks every link against something real. This page deliberately contains one that is not: [a link to a heading that does not exist](#no-such-heading). The banner above the article is the plugin's own output, read back from this page's frontmatter.
+
+It is a report, not a failure. Whether a broken link should stop your build is your decision, and this site chooses to show them rather than fall over.
+
+Links to routes are skipped through the `ignore` option. Astro maps `./mdx` to a page, but there is no `./mdx` on disk, so checking the filesystem for it would report a link that works.
+
 ## Built into Sätteri
 
 These need no plugin. Porting them would have been wasted work.

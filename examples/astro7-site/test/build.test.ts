@@ -148,6 +148,39 @@ describe("astro 7 build", () => {
     });
   });
 
+  describe("satteri-validate-links, reporting through frontmatter", () => {
+    // Astro reads only `data.astro` off the compile result and returns a fixed
+    // shape from it, so a plugin's own data key never reaches the page. This is
+    // the only channel there is, and only a real build proves it works.
+    const banner = /<aside class="broken-links"[^>]*>([\s\S]*?)<\/aside>/.exec(page)?.[1] ?? "";
+
+    it("surfaces findings on the page that has a broken link", () => {
+      expect(banner).not.toBe("");
+    });
+
+    it("names the link that does not resolve", () => {
+      expect(banner).toContain("#no-such-heading");
+      expect(banner).toContain("no heading in this document has the id");
+    });
+
+    it("reports only the deliberately broken link", () => {
+      expect(banner).toMatch(/\b1 broken link\b/);
+      // Astro stamps its own attributes onto every tag, so the match has to
+      // allow them.
+      expect(banner.match(/<li[^>]*>/g) ?? []).toHaveLength(1);
+    });
+
+    it("leaves a page with no broken links without a banner", () => {
+      expect(mdxPage).not.toContain('class="broken-links"');
+    });
+
+    it("does not fail the build over a broken link", () => {
+      // The page still rendered. Whether a broken link is fatal is the site's
+      // decision, not the plugin's.
+      expect(html).toContain("Broken links");
+    });
+  });
+
   describe("the mdx page", () => {
     it("exposes frontmatter to the page as an export", () => {
       expect(mdxPage).toContain("MDX frontmatter as an export");

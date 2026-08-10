@@ -9,6 +9,7 @@ import { satteriMathjax } from "satteri-mathjax";
 import { satteriMdxFrontmatter } from "satteri-mdx-frontmatter";
 import { defaultTagNames, satteriSanitize } from "satteri-sanitize";
 import { satteriSlug } from "satteri-slug";
+import { satteriValidateLinks } from "satteri-validate-links";
 
 // Set for GitHub Pages by the deploy workflow; unset locally so `astro dev` works.
 const site = process.env.SITE;
@@ -48,6 +49,17 @@ export default defineConfig({
         satteriBreaks(),
         satteriGithub({ repository: "Ashish-CodeJourney/satteri-plugins" }),
         satteriMdxFrontmatter(),
+        // Astro reads only `data.astro` off the compile result, so a plugin's
+        // own data key never reaches the page. Frontmatter is the one part of
+        // that shape Astro hands back, which is what this option writes to.
+        satteriValidateLinks({
+          intoAstroFrontmatter: true,
+          // Astro maps ./mdx to a page; there is no ./mdx on disk. Checking the
+          // filesystem for a route reports a link that works perfectly well, so
+          // extensionless destinations are left alone.
+          // Anchors are still checked; only path-like routes are skipped.
+          ignore: (url) => !url.startsWith("#") && !/\.[a-z]+$/i.test(url.split("#")[0] ?? ""),
+        }),
         useMathjax ? satteriMathjax() : satteriKatex(),
       ],
       hastPlugins: [

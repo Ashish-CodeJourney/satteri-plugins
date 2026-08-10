@@ -68,6 +68,9 @@ importers:
       satteri-slug:
         specifier: workspace:*
         version: link:../../packages/satteri-slug
+      satteri-validate-links:
+        specifier: workspace:*
+        version: link:../../packages/satteri-validate-links
     devDependencies:
       vitest:
         specifier: ^3.2.4
