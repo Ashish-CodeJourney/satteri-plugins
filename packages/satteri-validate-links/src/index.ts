@@ -117,6 +117,19 @@ export type SatteriValidateLinksOptions = {
    * object, which is not something to do unasked.
    */
   readonly intoAstroFrontmatter?: boolean;
+  /**
+   * Links to leave alone, by destination exactly as written.
+   *
+   * The usual reason is framework routes: a static site generator maps `./about`
+   * to a page, but there is no `./about` on disk, so checking the filesystem
+   * reports a link that is perfectly fine. Ignoring extensionless destinations
+   * is the common shape:
+   *
+   * ```js
+   * satteriValidateLinks({ ignore: (url) => !/\.[a-z]+$/i.test(url.split("#")[0]) })
+   * ```
+   */
+  readonly ignore?: (url: string) => boolean;
 };
 
 type AstroDatabag = { frontmatter?: Record<string, unknown> };
@@ -124,6 +137,7 @@ type AstroDatabag = { frontmatter?: Record<string, unknown> };
 export const satteriValidateLinks = ({
   key = "validateLinks",
   intoAstroFrontmatter = false,
+  ignore,
 }: SatteriValidateLinksOptions = {}): MdastPluginInput => () => {
   let ids: ReadonlySet<string> | undefined;
   /** Heading ids per resolved path, so a file linked to twice is read once. */
@@ -135,6 +149,7 @@ export const satteriValidateLinks = ({
       const { url } = node;
       // A bare "#" is a link to the top of the page, not to a heading.
       if (url === "#" || isExternal(url)) return;
+      if (ignore?.(url) === true) return;
 
       const data = ctx.data as Record<string, unknown> & { astro?: AstroDatabag };
       const report = (reason: string): void => {

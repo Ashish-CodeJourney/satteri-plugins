@@ -141,6 +141,53 @@ describe("links to another file", () => {
   });
 });
 
+describe("the ignore option", () => {
+  it("skips a link the predicate rejects", async () => {
+    const url = await withFiles({ "doc.md": "" });
+
+    const { data } = await compile("[a](./missing.md)\n", {
+      mdastPlugins: [satteriValidateLinks({ ignore: (link) => link === "./missing.md" })],
+      fileURL: url("doc.md"),
+    });
+
+    expect(data).not.toHaveProperty("validateLinks");
+  });
+
+  it("still checks links the predicate allows", async () => {
+    const url = await withFiles({ "doc.md": "" });
+
+    const { data } = await compile("[a](./missing.md)\n", {
+      mdastPlugins: [satteriValidateLinks({ ignore: () => false })],
+      fileURL: url("doc.md"),
+    });
+
+    expect(data).toHaveProperty("validateLinks");
+  });
+
+  it("can ignore framework routes, which are not files on disk", async () => {
+    // A static site generator maps ./about to a page, not to ./about on disk.
+    // Checking the filesystem for it reports a link that is perfectly fine.
+    const url = await withFiles({ "doc.md": "" });
+    const extensionless = (link: string) => !/\.[a-z]+$/i.test(link.split("#")[0] ?? "");
+
+    const { data } = await compile("[a](./about)\n[b](./missing.md)\n", {
+      mdastPlugins: [satteriValidateLinks({ ignore: extensionless })],
+      fileURL: url("doc.md"),
+    });
+
+    const findings = (data as { validateLinks?: Array<{ url: string }> }).validateLinks ?? [];
+    expect(findings.map((f) => f.url)).toEqual(["./missing.md"]);
+  });
+
+  it("consults the predicate for anchors too", async () => {
+    const { data } = await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ ignore: (link) => link.startsWith("#") })],
+    });
+
+    expect(data).not.toHaveProperty("validateLinks");
+  });
+});
+
 describe("where findings are written", () => {
   it("uses the `key` option as the property on data", async () => {
     const { data } = await compile("[a](#nope)\n", {

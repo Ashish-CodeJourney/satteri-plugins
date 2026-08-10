@@ -50,6 +50,32 @@ Findings look like this:
 }
 ```
 
+## Options
+
+### `key`
+
+`string`, default `"validateLinks"`. The property on `result.data` findings are written to.
+
+### `intoAstroFrontmatter`
+
+`boolean`, default `false`. Also copy findings onto `data.astro.frontmatter` under the same key.
+See [With Astro 7](#with-astro-7); it mutates the caller's object, so it is opt-in.
+
+### `ignore`
+
+`(url: string) => boolean`. Return `true` for a link that should not be checked. Consulted for every
+link, anchors included, before anything is resolved.
+
+It exists for framework routes. A static site generator maps `./about` to a page, but there is no
+`./about` on disk, so a filesystem check reports a link that works. Skip path-like destinations
+without an extension, and keep checking anchors:
+
+```js
+satteriValidateLinks({
+  ignore: (url) => !url.startsWith("#") && !/\.[a-z]+$/i.test(url.split("#")[0] ?? ""),
+})
+```
+
 ## Differences from `remark-validate-links`
 
 ### Findings come back on `result.data`, not as warnings
