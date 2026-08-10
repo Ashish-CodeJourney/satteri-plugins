@@ -101,7 +101,27 @@ const exists = async (path: string): Promise<boolean> => {
   }
 };
 
-export const satteriValidateLinks = (): MdastPluginInput => () => {
+export type SatteriValidateLinksOptions = {
+  /** Property on `result.data` the findings are written to. Default `validateLinks`. */
+  readonly key?: string;
+  /**
+   * Also copy findings onto `data.astro.frontmatter`, under the same key.
+   *
+   * Astro reads only `data.astro` off the compile result and returns a fixed
+   * shape from it, so a plugin's own key never reaches the page. Frontmatter is
+   * the one part of that shape Astro hands back, which makes it the only route
+   * from this plugin to an Astro page. Off by default; it mutates the caller's
+   * object, which is not something to do unasked.
+   */
+  readonly intoAstroFrontmatter?: boolean;
+};
+
+type AstroDatabag = { frontmatter?: Record<string, unknown> };
+
+export const satteriValidateLinks = ({
+  key = "validateLinks",
+  intoAstroFrontmatter = false,
+}: SatteriValidateLinksOptions = {}): MdastPluginInput => () => {
   let ids: ReadonlySet<string> | undefined;
   /** Heading ids per resolved path, so a file linked to twice is read once. */
   const idsByPath = new Map<string, ReadonlySet<string>>();
@@ -113,10 +133,18 @@ export const satteriValidateLinks = (): MdastPluginInput => () => {
       // A bare "#" is a link to the top of the page, not to a heading.
       if (url === "#" || isExternal(url)) return;
 
-      const data = ctx.data as { validateLinks?: Finding[] };
+      const data = ctx.data as Record<string, unknown> & { astro?: AstroDatabag };
       const report = (reason: string): void => {
-        const findings = (data.validateLinks ??= []);
-        findings.push({ url, reason, position: node.position });
+        const finding: Finding = { url, reason, position: node.position };
+
+        const findings = (data[key] ??= []) as Finding[];
+        findings.push(finding);
+
+        if (!intoAstroFrontmatter) return;
+        const frontmatter = data.astro?.frontmatter;
+        if (frontmatter === undefined) return;
+        const copy = (frontmatter[key] ??= []) as Finding[];
+        copy.push(finding);
       };
 
       if (url.startsWith("#")) {

@@ -26,6 +26,7 @@ each tested against the output of the plugin it replaces.
 | [`satteri-mathjax`](packages/satteri-mathjax) | [![npm](https://img.shields.io/npm/v/satteri-mathjax.svg)](https://www.npmjs.com/package/satteri-mathjax) | `rehype-mathjax` | Renders math with MathJax |
 | [`satteri-github`](packages/satteri-github) | [![npm](https://img.shields.io/npm/v/satteri-github.svg)](https://www.npmjs.com/package/satteri-github) | `remark-github` | Autolinks issues, mentions and SHAs |
 | [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) | [![npm](https://img.shields.io/npm/v/satteri-mdx-frontmatter.svg)](https://www.npmjs.com/package/satteri-mdx-frontmatter) | `remark-mdx-frontmatter` | Exposes MDX frontmatter as exports |
+| [`satteri-validate-links`](packages/satteri-validate-links) | [![npm](https://img.shields.io/npm/v/satteri-validate-links.svg)](https://www.npmjs.com/package/satteri-validate-links) | `remark-validate-links` | Finds links to missing files and headings |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -80,12 +81,8 @@ Sätteri does **not** generate heading ids on its own — that is what
 
 ### Not ported yet
 
-| Plugin | Status |
-| --- | --- |
-| `remark-validate-links` | Next up. Report through `ctx.data`, which is returned as `result.data`; source positions are on every node already, so no opt-in is needed |
-| `unified` compatibility shim | Wanted, but Sätteri's one-pass model means a documented support matrix rather than a drop-in adapter |
-
-Contributions welcome.
+A `unified` compatibility shim is the one left worth building. It is wanted, but Sätteri's one-pass
+model means a documented support matrix rather than a drop-in adapter. Contributions welcome.
 
 ### Not needed
 

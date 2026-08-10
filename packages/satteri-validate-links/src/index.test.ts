@@ -141,6 +141,93 @@ describe("links to another file", () => {
   });
 });
 
+describe("where findings are written", () => {
+  it("uses the `key` option as the property on data", async () => {
+    const { data } = await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ key: "brokenLinks" })],
+    });
+
+    expect(data).toHaveProperty("brokenLinks");
+    expect(data).not.toHaveProperty("validateLinks");
+  });
+
+  it("writes nothing at all when every link is fine", async () => {
+    const { data } = await compile("# Hi\n\n[a](#hi)\n", {
+      mdastPlugins: [satteriValidateLinks()],
+    });
+
+    expect(data).not.toHaveProperty("validateLinks");
+  });
+
+  it("copies findings into Astro's frontmatter when asked", async () => {
+    // Astro reads back the object it passed as `data.astro`, and returns
+    // `data.astro.frontmatter` as the page's frontmatter. That is the only
+    // channel from a plugin to an Astro page.
+    const astro = { frontmatter: { title: "x" } };
+
+    await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ intoAstroFrontmatter: true })],
+      data: { astro },
+    });
+
+    expect(astro.frontmatter).toMatchObject({
+      title: "x",
+      validateLinks: [{ url: "#nope" }],
+    });
+  });
+
+  it("does not touch frontmatter unless asked", async () => {
+    const astro = { frontmatter: { title: "x" } };
+
+    await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks()],
+      data: { astro },
+    });
+
+    expect(astro.frontmatter).toEqual({ title: "x" });
+  });
+
+  it("survives a compile with no astro databag", async () => {
+    const findings = await findingsFor("[a](#nope)\n");
+
+    expect(findings).toHaveLength(1);
+  });
+
+  it("still reports when asked for frontmatter but there is no databag", async () => {
+    // Outside Astro there is no `data.astro`, and asking for frontmatter must
+    // not turn that into a crash.
+    const { data } = await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ intoAstroFrontmatter: true })],
+    });
+
+    expect(data).toHaveProperty("validateLinks");
+  });
+
+  it("copes with an astro databag that has no frontmatter", async () => {
+    const astro = {};
+
+    const { data } = await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ intoAstroFrontmatter: true })],
+      data: { astro },
+    });
+
+    expect(data).toHaveProperty("validateLinks");
+    expect(astro).toEqual({});
+  });
+
+  it("uses the same custom key in frontmatter", async () => {
+    const astro = { frontmatter: { title: "x" } };
+
+    await compile("[a](#nope)\n", {
+      mdastPlugins: [satteriValidateLinks({ key: "brokenLinks", intoAstroFrontmatter: true })],
+      data: { astro },
+    });
+
+    expect(astro.frontmatter).toHaveProperty("brokenLinks");
+    expect(astro.frontmatter).not.toHaveProperty("validateLinks");
+  });
+});
+
 describe("links it has no business checking", () => {
   it.each([
     ["https://example.com/nope"],
