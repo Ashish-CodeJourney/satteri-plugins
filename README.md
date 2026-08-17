@@ -71,13 +71,13 @@ Sätteri does **not** generate heading ids on its own — that is what
 
 | Plugin | Use instead |
 | --- | --- |
-| `rehype-external-links` | `satteri-external-links` |
-| `remark-emoji` | `satteri-emoji` |
-| `remark-toc` | `@bhdouglass/satteri-toc`, `pretty-toc` |
-| `rehype-mermaid` | `satteri-beautiful-mermaid`, `@xingwangzhe/satteri-mermaid` |
-| `rehype-github-alerts`, `remark-github-blockquote-alert` | `satteri-callouts` |
-| Code highlighting | `satteri-expressive-code` |
-| MDX auto-imports | `@bhdouglass/satteri-auto-imports`, `@xsynaptic/satteri-auto-import` |
+| `rehype-external-links` | [`satteri-external-links`](https://www.npmjs.com/package/satteri-external-links) |
+| `remark-emoji` | [`satteri-emoji`](https://www.npmjs.com/package/satteri-emoji) |
+| `remark-toc` | [`@bhdouglass/satteri-toc`](https://www.npmjs.com/package/@bhdouglass/satteri-toc), [`pretty-toc`](https://www.npmjs.com/package/pretty-toc) |
+| `rehype-mermaid` | [`satteri-beautiful-mermaid`](https://www.npmjs.com/package/satteri-beautiful-mermaid), [`@xingwangzhe/satteri-mermaid`](https://www.npmjs.com/package/@xingwangzhe/satteri-mermaid) |
+| `rehype-github-alerts`, `remark-github-blockquote-alert` | [`satteri-callouts`](https://www.npmjs.com/package/satteri-callouts) |
+| Code highlighting | [`satteri-expressive-code`](https://www.npmjs.com/package/satteri-expressive-code) |
+| MDX auto-imports | [`@bhdouglass/satteri-auto-imports`](https://www.npmjs.com/package/@bhdouglass/satteri-auto-imports), [`@xsynaptic/satteri-auto-import`](https://www.npmjs.com/package/@xsynaptic/satteri-auto-import) |
 
 ### Not ported yet
 
