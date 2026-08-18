@@ -115,6 +115,14 @@ describe("satteri-sanitize", () => {
       );
     });
 
+    it("strips javascript: when the entity is unknown and left intact", async () => {
+      // An entity the map does not recognise (here `&zzz;`) must be left as
+      // written, not dropped, so the colon still ends a disguised scheme.
+      expect(await clean('<a href="javascript&zzz;:alert(1)">x</a>')).toBe(
+        "<p><a>x</a></p>",
+      );
+    });
+
     it("strips javascript: padded with control characters", async () => {
       expect(await clean('<a href="java\tscript:alert(1)">x</a>')).toBe("<p><a>x</a></p>");
     });
