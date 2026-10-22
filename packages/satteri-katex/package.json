@@ -46,10 +46,10 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "katex": "^0.16.25"
+    "katex": "^0.19.0"
   },
   "peerDependencies": {
-    "satteri": "^0.9.5"
+    "satteri": "^0.10.0"
   },
   "devDependencies": {
     "@satteri-plugins/test-kit": "workspace:*",
