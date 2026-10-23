@@ -18,7 +18,7 @@ npm install satteri-katex
 KaTeX also needs its stylesheet on the page:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css" />
 ```
 
 ## Use
