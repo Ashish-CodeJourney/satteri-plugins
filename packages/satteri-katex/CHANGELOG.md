@@ -1,5 +1,15 @@
 # satteri-katex
 
+## 0.2.0
+
+### Minor Changes
+
+- 3433973: Require Sätteri 0.10. The `satteri` peer range is now `^0.10.0`; Sätteri 0.9 is no longer supported.
+- ce009f2: Update KaTeX to 0.19. Load the stylesheet from KaTeX 0.19, as 0.18 prefixed its CSS classes, and expect
+  stricter `strict` reporting for missing character metrics. See the KaTeX release notes for
+  [0.18.0](https://github.com/KaTeX/KaTeX/releases/tag/v0.18.0) and
+  [0.19.0](https://github.com/KaTeX/KaTeX/releases/tag/v0.19.0).
+
 ## 0.1.1
 
 ### Patch Changes
