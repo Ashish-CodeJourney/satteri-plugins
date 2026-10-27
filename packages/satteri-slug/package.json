@@ -48,7 +48,7 @@
     "github-slugger": "^2.0.0"
   },
   "peerDependencies": {
-    "satteri": "^0.10.0"
+    "satteri": "^0.11.5"
   },
   "devDependencies": {
     "@satteri-plugins/test-kit": "workspace:*"

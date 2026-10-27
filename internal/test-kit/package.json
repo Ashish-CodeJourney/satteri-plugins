@@ -10,6 +10,6 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
-    "satteri": "^0.10.0"
+    "satteri": "^0.11.5"
   }
 }
