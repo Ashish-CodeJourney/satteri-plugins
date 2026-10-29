@@ -1,5 +1,11 @@
 # satteri-sanitize
 
+## 0.3.0
+
+### Minor Changes
+
+- fd16b1b: Require Sätteri 0.11. The `satteri` peer range is now `^0.11.5`; Sätteri 0.10 is no longer supported.
+
 ## 0.2.0
 
 ### Minor Changes

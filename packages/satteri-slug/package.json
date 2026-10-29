@@ -1,6 +1,6 @@
 {
   "name": "satteri-slug",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Sätteri plugin to add `id` attributes to headings — a port of rehype-slug.",
   "keywords": [
     "satteri",

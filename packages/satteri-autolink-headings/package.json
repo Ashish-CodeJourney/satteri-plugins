@@ -1,6 +1,6 @@
 {
   "name": "satteri-autolink-headings",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Sätteri plugin to add links to headings — a port of rehype-autolink-headings.",
   "keywords": [
     "satteri",

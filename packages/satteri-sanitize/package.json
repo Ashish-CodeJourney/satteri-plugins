@@ -1,6 +1,6 @@
 {
   "name": "satteri-sanitize",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Sätteri plugin to sanitize HTML in Markdown — a port of rehype-sanitize.",
   "keywords": [
     "satteri",
