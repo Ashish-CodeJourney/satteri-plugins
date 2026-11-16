@@ -27,6 +27,7 @@ each tested against the output of the plugin it replaces.
 | [`satteri-github`](packages/satteri-github) | [![npm](https://img.shields.io/npm/v/satteri-github.svg)](https://www.npmjs.com/package/satteri-github) [![npm downloads](https://img.shields.io/npm/dm/satteri-github.svg?label=downloads)](https://www.npmjs.com/package/satteri-github) | `remark-github` | Autolinks issues, mentions and SHAs |
 | [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) | [![npm](https://img.shields.io/npm/v/satteri-mdx-frontmatter.svg)](https://www.npmjs.com/package/satteri-mdx-frontmatter) [![npm downloads](https://img.shields.io/npm/dm/satteri-mdx-frontmatter.svg?label=downloads)](https://www.npmjs.com/package/satteri-mdx-frontmatter) | `remark-mdx-frontmatter` | Exposes MDX frontmatter as exports |
 | [`satteri-validate-links`](packages/satteri-validate-links) | [![npm](https://img.shields.io/npm/v/satteri-validate-links.svg)](https://www.npmjs.com/package/satteri-validate-links) [![npm downloads](https://img.shields.io/npm/dm/satteri-validate-links.svg?label=downloads)](https://www.npmjs.com/package/satteri-validate-links) | `remark-validate-links` | Finds links to missing files and headings |
+| [`satteri-citation`](packages/satteri-citation) | [![npm](https://img.shields.io/npm/v/satteri-citation.svg)](https://www.npmjs.com/package/satteri-citation) [![npm downloads](https://img.shields.io/npm/dm/satteri-citation.svg?label=downloads)](https://www.npmjs.com/package/satteri-citation) | `rehype-citation` | Renders `[@key]` citations and a reference list from BibTeX or CSL-JSON |
 
 Live example, built by Astro 7 in CI: **https://ashish-codejourney.github.io/satteri-plugins**
 ([source](examples/astro7-site))
@@ -66,6 +67,7 @@ Sätteri does **not** generate heading ids on its own — that is what
 | `rehype-mathjax` | [`satteri-mathjax`](packages/satteri-mathjax) |
 | `remark-github` | [`satteri-github`](packages/satteri-github) |
 | `remark-mdx-frontmatter` | [`satteri-mdx-frontmatter`](packages/satteri-mdx-frontmatter) |
+| `rehype-citation` | [`satteri-citation`](packages/satteri-citation) |
 
 ### Already covered by the community
 

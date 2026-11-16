@@ -1,12 +1,12 @@
 ---
 layout: ../layouts/Page.astro
 title: The plugins Sätteri left behind
-description: Eight ports of the remark and rehype plugins that stop working when Astro 7 switches to Sätteri — each one demonstrated, and the whole page snapshot-tested in CI.
+description: Nine ports of the remark and rehype plugins that stop working when Astro 7 switches to Sätteri — each one demonstrated, and the whole page snapshot-tested in CI.
 ---
 
 Astro 7 compiles Markdown with [Sätteri](https://satteri.bruits.org), a Rust engine that does not run remark or rehype plugins. Everything below is a port that restores one of them.
 
-This page is the proof. It is built by real Astro with all eight plugins enabled, and its HTML is asserted in CI, so nothing here can rot without the build going red.
+This page is the proof. It is built by real Astro with all nine plugins enabled, and its HTML is asserted in CI, so nothing here can rot without the build going red.
 
 Note that `satteri-breaks` is enabled, which turns every single newline into a break. Paragraphs in this document's source are therefore written on one line each, except where the break is the point.
 
@@ -20,6 +20,7 @@ Note that `satteri-breaks` is enabled, which turns every single newline into a b
 | `satteri-github` | `remark-github` | [GitHub references](#github-references) |
 | `satteri-sanitize` | `rehype-sanitize` | [Untrusted HTML](#untrusted-html) |
 | `satteri-mdx-frontmatter` | `remark-mdx-frontmatter` | [the MDX page](./mdx) |
+| `satteri-citation` | `rehype-citation` | [Citations](#citations) |
 
 ## Headings and anchors
 
@@ -115,5 +116,15 @@ const { html } = markdownToHtml("## Hello", {
   hastPlugins: [satteriSlug(), satteriAutolinkHeadings(), satteriSanitize()],
 });
 ```
+
+## Citations
+
+`satteri-citation` renders `[@key]` against the bibliography in `src/refs.bib`, adds a cluster when several keys share brackets, and lists the cited works at the end of the page. Narrative citations drop the brackets: as @Smith2001 showed, the author is named in the sentence itself.
+
+Single citation: [@Nash1950].
+
+Several keys in one citation: [@Nash1950; @Smith2001].
+
+With a locator: [@Nash1950, p. 3].
 
 [^1]: Footnotes are part of GFM, which Sätteri enables by default.

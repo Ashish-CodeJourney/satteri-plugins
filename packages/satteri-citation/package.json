@@ -1,0 +1,62 @@
+{
+  "name": "satteri-citation",
+  "version": "0.0.0",
+  "description": "Sätteri plugin to render Pandoc-style citations and a reference list — a port of rehype-citation.",
+  "keywords": [
+    "satteri",
+    "satteri-plugin",
+    "hast",
+    "markdown",
+    "mdx",
+    "astro",
+    "citation",
+    "bibliography",
+    "bibtex",
+    "csl",
+    "rehype-citation"
+  ],
+  "license": "MIT",
+  "author": "Ashish Vaghela <ashish.vaghela@nelkinda.com> (https://ashish-codejourney.github.io/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashish-CodeJourney/satteri-plugins.git",
+    "directory": "packages/satteri-citation"
+  },
+  "homepage": "https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-citation#readme",
+  "bugs": "https://github.com/Ashish-CodeJourney/satteri-plugins/issues",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --dts --format esm",
+    "prepublishOnly": "node ../../scripts/check-publishable.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@citation-js/core": "^0.7.21",
+    "@citation-js/plugin-bibtex": "^0.7.21",
+    "@citation-js/plugin-csl": "^0.7.22"
+  },
+  "peerDependencies": {
+    "satteri": "^0.11.5"
+  },
+  "devDependencies": {
+    "@satteri-plugins/test-kit": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

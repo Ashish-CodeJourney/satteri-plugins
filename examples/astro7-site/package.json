@@ -22,6 +22,7 @@
     "satteri": "^0.11.5",
     "satteri-autolink-headings": "workspace:*",
     "satteri-breaks": "workspace:*",
+    "satteri-citation": "workspace:*",
     "satteri-github": "workspace:*",
     "satteri-katex": "workspace:*",
     "satteri-mathjax": "workspace:*",
