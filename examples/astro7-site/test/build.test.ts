@@ -226,4 +226,20 @@ describe("astro 7 build", () => {
     expect(html).toContain('type="checkbox"');
     expect(html).toContain("footnote");
   });
+  describe("citations", () => {
+    it("renders each citation as a span with author-date text", () => {
+      expect(html).toMatch(/<span id="user-content-citation--nash1950--\d+">\(Nash, 1950\)<\/span>/);
+      expect(html).toContain('<span id="user-content-citation--nash1950--smith2001--');
+    });
+
+    it("renders a narrative citation as author followed by year", () => {
+      expect(html).toContain("Smith &amp; Doe (2001)");
+    });
+
+    it("lists each cited work once in the reference list", () => {
+      expect(html).toContain('<div id="user-content-refs">');
+      expect(countOf(/id="user-content-bib-nash1950"/g)).toBe(1);
+      expect(countOf(/id="user-content-bib-smith2001"/g)).toBe(1);
+    });
+  });
 });

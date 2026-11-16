@@ -1,0 +1,24 @@
+[
+  {
+    "id": "Nash1950",
+    "type": "article-journal",
+    "author": [{ "family": "Nash", "given": "John" }],
+    "title": "Equilibrium points in n-person games",
+    "container-title": "Proceedings of the National Academy of Sciences",
+    "volume": "36",
+    "issue": "1",
+    "page": "48-49",
+    "issued": { "date-parts": [[1950]] }
+  },
+  {
+    "id": "Smith2001",
+    "type": "book",
+    "author": [
+      { "family": "Smith", "given": "Jane" },
+      { "family": "Doe", "given": "Alex" }
+    ],
+    "title": "A Book Title",
+    "publisher": "Penguin",
+    "issued": { "date-parts": [[2001]] }
+  }
+]

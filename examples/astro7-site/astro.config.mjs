@@ -1,8 +1,10 @@
+import { fileURLToPath } from "node:url";
 import mdx from "@astrojs/mdx";
 import { satteri } from "@astrojs/markdown-satteri";
 import { defineConfig } from "astro/config";
 import { satteriAutolinkHeadings } from "satteri-autolink-headings";
 import { satteriBreaks } from "satteri-breaks";
+import { satteriCitation } from "satteri-citation";
 import { satteriGithub } from "satteri-github";
 import { satteriKatex } from "satteri-katex";
 import { satteriMathjax } from "satteri-mathjax";
@@ -47,6 +49,8 @@ export default defineConfig({
       features: { math: true },
       mdastPlugins: [
         satteriBreaks(),
+        // Before satteriGithub, which would otherwise autolink the `@` in a citation key as a mention.
+        satteriCitation({ bibliography: fileURLToPath(new URL("./src/refs.bib", import.meta.url)) }),
         satteriGithub({ repository: "Ashish-CodeJourney/satteri-plugins" }),
         satteriMdxFrontmatter(),
         // Astro reads only `data.astro` off the compile result, so a plugin's

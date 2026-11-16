@@ -1,0 +1,10 @@
+[
+  {
+    "id": "Markup2020",
+    "type": "book",
+    "author": [{ "family": "Ray<x>", "given": "Pat" }],
+    "title": "A book",
+    "publisher": "Penguin",
+    "issued": { "date-parts": [[2020]] }
+  }
+]
