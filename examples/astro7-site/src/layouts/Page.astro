@@ -8,6 +8,14 @@ const brokenLinks = frontmatter.validateLinks ?? [];
 // BASE_URL carries no trailing slash when the site is deployed under a base
 // path, so concatenating onto it yields "/satteri-pluginsmdx/". Join instead.
 const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/${path}`;
+
+// Social previews need absolute URLs. `site` is only set when the build is given
+// SITE, so fall back to the deployed origin rather than emitting localhost.
+const origin = (Astro.site ?? new URL("https://satteri-plugins.js.org/")).href;
+const pageUrl = new URL(Astro.url.pathname, origin).href;
+const image = new URL(href("og.png"), origin).href;
+const description = frontmatter.description;
+const showHero = frontmatter.hero !== false;
 ---
 
 <!doctype html>
@@ -16,12 +24,22 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{frontmatter.title}</title>
-    <meta name="description" content={frontmatter.description} />
+    <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    <link rel="canonical" href={Astro.url.href} />
-    <meta property="og:title" content={frontmatter.title} />
-    <meta property="og:description" content={frontmatter.description} />
+    <link rel="canonical" href={pageUrl} />
+    <meta property="og:site_name" content="satteri-plugins" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content={frontmatter.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="satteri-plugins: remark and rehype plugins, ported to Sätteri" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={frontmatter.title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%88%91%3C/text%3E%3C/svg%3E"
@@ -43,7 +61,7 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
       })();
     </script>
 
-    <style>
+    <style is:global>
       :root {
         --bg: #fdfdfc;
         --bg-raised: #ffffff;
@@ -488,6 +506,76 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
       .site-footer p {
         margin: 0.35rem 0;
       }
+      /* ---------- landing and plugin pages ---------- */
+
+      .hero .lede {
+        font-size: 1.15rem;
+        color: var(--fg-muted);
+        max-width: 40rem;
+      }
+
+      .install {
+        margin: 1.5rem 0 0;
+        padding: 0.9rem 1.1rem;
+        border-radius: 10px;
+        background: var(--bg-sunken);
+        border: 1px solid var(--line);
+        overflow-x: auto;
+        font-size: 0.95rem;
+      }
+
+      .plugin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0 2.5rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .plugin-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        height: 100%;
+        padding: 1.1rem 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg-raised);
+        box-shadow: var(--shadow);
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      .plugin-card:hover {
+        border-color: var(--accent);
+      }
+
+      .plugin-card strong {
+        font-size: 1rem;
+        overflow-wrap: anywhere;
+      }
+
+      .plugin-card .replaces {
+        font-size: 0.85rem;
+        color: var(--fg-muted);
+      }
+
+      .plugin-card p {
+        margin: 0.25rem 0 0;
+        font-size: 0.93rem;
+        color: var(--fg-muted);
+      }
+
+      .plugin-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.9rem;
+        margin: 0 0 1.5rem;
+        font-size: 0.9rem;
+        color: var(--fg-muted);
+      }
+
     </style>
   </head>
 
@@ -500,6 +588,7 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
         </a>
         <nav class="header-links">
           <a class="ghost" href={href("")}>Plugins</a>
+          <a class="ghost" href={href("demo/")}>Demo</a>
           <a class="ghost" href={href("mdx/")}>MDX</a>
           <a class="ghost" href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>
           <button class="ghost" id="theme-toggle" type="button" aria-label="Switch theme">
@@ -539,27 +628,15 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
     </header>
 
     <div class="shell">
-      <section class="hero">
-        <span class="eyebrow">Astro 7 · Sätteri</span>
-        <h1>{frontmatter.title}</h1>
-        <p>{frontmatter.description}</p>
-        <div class="pills">
-          {
-            [
-              "satteri-slug",
-              "satteri-autolink-headings",
-              "satteri-katex",
-              "satteri-mathjax",
-              "satteri-breaks",
-              "satteri-github",
-              "satteri-sanitize",
-              "satteri-mdx-frontmatter",
-            ].map((name) => (
-              <a class="pill" href={`https://www.npmjs.com/package/${name}`}>{name}</a>
-            ))
-          }
-        </div>
-      </section>
+      {
+        showHero && (
+          <section class="hero">
+            <span class="eyebrow">Astro 7 · Sätteri</span>
+            <h1>{frontmatter.title}</h1>
+            <p>{description}</p>
+          </section>
+        )
+      }
 
       <main>
         {
@@ -626,7 +703,7 @@ const href = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, "")}/$
             Contributing
           </a>
         </p>
-        <p>Built with Astro 7 and Sätteri. This page is snapshot-tested in CI.</p>
+        <p>Built with Astro 7 and Sätteri, and every page is checked in CI before it deploys.</p>
       </div>
     </footer>
 

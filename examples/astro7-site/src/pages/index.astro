@@ -1,0 +1,64 @@
+---
+import Page from "../layouts/Page.astro";
+import { plugins } from "../data/plugins";
+
+const description =
+  "Remark and rehype plugins ported to Sätteri, the Rust Markdown engine behind Astro 7. Ten plugins, each checked against the output of the original.";
+---
+
+<Page frontmatter={{ title: "Remark and rehype plugins, ported to Sätteri", description, hero: false }}>
+  <section class="hero">
+    <span class="eyebrow">Sätteri · Astro 7</span>
+    <h1>Remark and rehype plugins, ported to Sätteri</h1>
+    <p class="lede">{description}</p>
+    <pre class="install"><code>npm install satteri-slug satteri-citation</code></pre>
+  </section>
+
+  <h2 id="plugins">All plugins</h2>
+  <ul class="plugin-grid">
+    {
+      plugins.map((plugin) => (
+        <li>
+          <a class="plugin-card" href={`plugins/${plugin.name}/`}>
+            <strong>{plugin.name}</strong>
+            <span class="replaces">replaces <code>{plugin.replaces}</code> · {plugin.stage}</span>
+            <p>{plugin.summary}</p>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2 id="use-with-astro">Use with Astro</h2>
+  <p>Pass the plugins to Astro's Sätteri processor. Each plugin is a function you call with its options.</p>
+  <pre><code>{`// astro.config.mjs
+import { satteri } from "@astrojs/markdown-satteri";
+import { satteriSlug } from "satteri-slug";
+import { satteriCitation } from "satteri-citation";
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({
+      mdastPlugins: [
+        satteriCitation({ bibliography: "./src/refs.bib" }),
+      ],
+      hastPlugins: [satteriSlug()],
+    }),
+  },
+});`}</code></pre>
+  <p>
+    Some plugins run on the Markdown tree (MDAST) and others on the HTML tree (HAST). Each plugin page says which, because the
+    order of plugins in each list matters.
+  </p>
+
+  <h2 id="why">Why these exist</h2>
+  <p>
+    Astro 7 compiles Markdown with Sätteri, which does not run remark or rehype plugins. These packages restore the behaviour of
+    the originals, with the same output checked against them, so existing sites keep working.
+  </p>
+  <p>
+    Read the <a href="demo/">demo</a> to see every plugin running in a real Astro build, or the <a href="mdx/">MDX page</a> for
+    the MDX side. The source, tests and changelogs are on
+    <a href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>.
+  </p>
+</Page>

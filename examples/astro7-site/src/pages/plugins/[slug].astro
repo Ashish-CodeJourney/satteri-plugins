@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from "astro:content";
+import Page from "../../layouts/Page.astro";
+import { pluginBySlug } from "../../data/plugins";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("plugins");
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const info = pluginBySlug(entry.id);
+if (info === undefined) throw new Error(`No plugin metadata for ${entry.id}`);
+const { Content } = await render(entry);
+const npm = `https://www.npmjs.com/package/${info.name}`;
+const source = `https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/${info.name}`;
+---
+
+<Page frontmatter={{ title: info.name, description: info.summary, hero: false }}>
+  <h1 class="plugin-title">{info.name}</h1>
+  <p class="plugin-meta">
+    <span>Port of <code>{info.replaces}</code></span>
+    <span>{info.stage}</span>
+    <a href={npm}>npm</a>
+    <a href={source}>Source</a>
+  </p>
+  <div class="readme">
+    <Content />
+  </div>
+</Page>
+
+<style is:global>
+  .readme > h1:first-child {
+    display: none;
+  }
+
+  .plugin-title {
+    margin: 0.5rem 0 0.75rem;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+</style>

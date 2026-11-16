@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 import mdx from "@astrojs/mdx";
 import { satteri } from "@astrojs/markdown-satteri";
 import { defineConfig } from "astro/config";
+import { defineMdastPlugin } from "satteri";
 import { satteriAutolinkHeadings } from "satteri-autolink-headings";
 import { satteriBreaks } from "satteri-breaks";
 import { satteriCitation } from "satteri-citation";
@@ -16,6 +17,17 @@ import { satteriValidateLinks } from "satteri-validate-links";
 // Set for GitHub Pages by the deploy workflow; unset locally so `astro dev` works.
 const site = process.env.SITE;
 const base = process.env.BASE;
+
+// The READMEs link to sibling packages relatively (`../satteri-slug`), which works on
+// GitHub. On the site those links should open the plugin's page instead.
+const pluginPrefix = (base ?? "").replace(/\/$/, "");
+const pluginLinks = defineMdastPlugin({
+  name: "rewrite-plugin-links",
+  link(node, ctx) {
+    if (!node.url.startsWith("../satteri-")) return;
+    ctx.replaceNode(node, { ...node, url: `${pluginPrefix}/plugins/${node.url.slice("../".length)}/` });
+  },
+});
 
 // KaTeX and MathJax both consume the same math nodes, so only one can run.
 // CI builds this site twice, once per renderer, to cover both.
@@ -48,6 +60,7 @@ export default defineConfig({
     processor: satteri({
       features: { math: true },
       mdastPlugins: [
+        pluginLinks,
         satteriBreaks(),
         // Before satteriGithub, which would otherwise autolink the `@` in a citation key as a mention.
         satteriCitation({ bibliography: fileURLToPath(new URL("./src/refs.bib", import.meta.url)) }),

@@ -8,7 +8,8 @@ import { describe, expect, it } from "vitest";
  *
  * Run `pnpm build` in this package first; CI does that before calling vitest.
  */
-const page = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+const page = readFileSync(new URL("../dist/demo/index.html", import.meta.url), "utf8");
+const landing = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
 const mdxPage = readFileSync(new URL("../dist/mdx/index.html", import.meta.url), "utf8");
 
 /** Which maths renderer this build used. CI builds the site once per renderer. */
@@ -29,6 +30,22 @@ const base = (process.env["BASE"] ?? "").replace(/\/$/, "");
 const html = /<article[^>]*>([\s\S]*?)<\/article>/.exec(page)?.[1] ?? "";
 
 const countOf = (pattern: RegExp) => html.match(pattern)?.length ?? 0;
+
+const PLUGINS = [
+  "satteri-slug",
+  "satteri-autolink-headings",
+  "satteri-katex",
+  "satteri-mathjax",
+  "satteri-breaks",
+  "satteri-github",
+  "satteri-sanitize",
+  "satteri-mdx-frontmatter",
+  "satteri-validate-links",
+  "satteri-citation",
+];
+
+const pluginPage = (name: string) =>
+  readFileSync(new URL(`../dist/plugins/${name}/index.html`, import.meta.url), "utf8");
 
 describe("astro 7 build", () => {
   it("renders the markdown into the layout", () => {
@@ -240,6 +257,50 @@ describe("astro 7 build", () => {
       expect(html).toContain('<div id="user-content-refs">');
       expect(countOf(/id="user-content-bib-nash1950"/g)).toBe(1);
       expect(countOf(/id="user-content-bib-smith2001"/g)).toBe(1);
+    });
+  });
+
+  describe("landing page", () => {
+    it("lists every plugin as a card linking to its page", () => {
+      expect(landing.match(/class="plugin-card"/g)?.length).toBe(PLUGINS.length);
+      for (const name of PLUGINS) {
+        expect(landing).toContain(`href="plugins/${name}/"`);
+      }
+    });
+
+    it("gives social previews an absolute image and card type", () => {
+      expect(landing).toContain(
+        `<meta property="og:image" content="https://satteri-plugins.js.org${base}/og.png"`,
+      );
+      expect(landing).toContain('<meta name="twitter:card" content="summary_large_image"');
+      expect(landing).toContain(`<link rel="canonical" href="https://satteri-plugins.js.org${base}/"`);
+    });
+
+    it("ships the social card image it points at", () => {
+      expect(readFileSync(new URL("../dist/og.png", import.meta.url)).subarray(1, 4).toString()).toBe("PNG");
+    });
+  });
+
+  describe("plugin pages", () => {
+    it("has a page for every plugin in the monorepo", () => {
+      for (const name of PLUGINS) {
+        expect(pluginPage(name)).toContain(`https://www.npmjs.com/package/${name}`);
+      }
+    });
+
+    it("renders the README body from the package", () => {
+      expect(pluginPage("satteri-slug")).toContain("GitHub slugging");
+    });
+
+    it("points links between plugins at their pages", () => {
+      expect(pluginPage("satteri-autolink-headings")).toContain(`href="${base}/plugins/satteri-slug/"`);
+      for (const name of PLUGINS) {
+        expect(pluginPage(name)).not.toContain("../satteri-");
+      }
+    });
+
+    it("gives each plugin page its own social title", () => {
+      expect(pluginPage("satteri-citation")).toContain('<meta property="og:title" content="satteri-citation"');
     });
   });
 });
