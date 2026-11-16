@@ -483,13 +483,6 @@ const showHero = frontmatter.hero !== false;
         font-size: 0.95rem;
       }
 
-      .about-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        font-size: 0.875rem;
-      }
-
       @media (max-width: 34rem) {
         .about {
           flex-direction: column;
@@ -574,6 +567,28 @@ const showHero = frontmatter.hero !== false;
         margin: 0 0 1.5rem;
         font-size: 0.9rem;
         color: var(--fg-muted);
+      }
+
+      .about-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+
+      .about-links a {
+        display: inline-grid;
+        place-items: center;
+        width: 2.1rem;
+        height: 2.1rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--fg-muted);
+      }
+
+      .about-links a:hover {
+        color: var(--accent);
+        border-color: var(--accent);
       }
 
     </style>
@@ -676,19 +691,29 @@ const showHero = frontmatter.hero !== false;
           />
           <div>
             <h2>Ashish Vaghela</h2>
-            <p class="role">Software Crafter at Nelkinda</p>
             <p>
-              Builds open source tooling for the Astro and Sätteri ecosystem. These plugins came out
-              of migrating real sites off the unified pipeline and finding the plugin ecosystem
-              missing.
+              Software engineer who builds reliable systems that scale, contributes to open source, and speaks at meetups. I also
+              write, about code and about life.
             </p>
             <div class="about-links">
-              <a href="https://ashish-codejourney.github.io/" rel="me">Website</a>
-              <a href="https://github.com/Ashish-CodeJourney" rel="me">GitHub</a>
-              <a href="https://www.npmjs.com/~codejourney" rel="me">npm</a>
-              <a href="https://linkedin.com/in/ashish-codejourney" rel="me">LinkedIn</a>
-              <a href="https://twitter.com/ashishvaghelaa" rel="me">Twitter</a>
-              <a href="mailto:ashish.vaghela@nelkinda.com">Email</a>
+              <a href="https://ashishvaghela.in/" rel="me" aria-label="Website" title="Website">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"></path></svg>
+              </a>
+              <a href="https://github.com/Ashish-CodeJourney" rel="me" aria-label="GitHub" title="GitHub">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg>
+              </a>
+              <a href="https://www.npmjs.com/~codejourney" rel="me" aria-label="npm" title="npm">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456L12.04 19.17H5.113z"></path></svg>
+              </a>
+              <a href="https://linkedin.com/in/ashish-codejourney" rel="me" aria-label="LinkedIn" title="LinkedIn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 11v5M8 8v.01M12 16v-5M12 11c0-1 1-2 2-2s2 1 2 2v5"></path></svg>
+              </a>
+              <a href="https://twitter.com/ashishvaghelaa" rel="me" aria-label="X (Twitter)" title="X (Twitter)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>
+              </a>
+              <a href="mailto:hi@ashishvaghela.in" rel="me" aria-label="Email" title="Email">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 6-10 7L2 6"></path></svg>
+              </a>
             </div>
           </div>
         </aside>

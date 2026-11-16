@@ -11,7 +11,8 @@ const description =
     <span class="eyebrow">Sätteri · Astro 7</span>
     <h1>Remark and rehype plugins, ported to Sätteri</h1>
     <p class="lede">{description}</p>
-    <pre class="install"><code>npm install satteri-slug satteri-citation</code></pre>
+    <pre class="install"><code>npm install &lt;plugin&gt;</code></pre>
+    <p>Install the plugins you need one at a time. Each plugin's page shows its own install command and usage.</p>
   </section>
 
   <h2 id="plugins">All plugins</h2>
@@ -22,6 +23,7 @@ const description =
           <a class="plugin-card" href={`plugins/${plugin.name}/`}>
             <strong>{plugin.name}</strong>
             <span class="replaces">replaces <code>{plugin.replaces}</code> · {plugin.stage}</span>
+            <code class="card-install">npm install {plugin.name}</code>
             <p>{plugin.summary}</p>
           </a>
         </li>
@@ -58,7 +60,7 @@ export default defineConfig({
   </p>
   <p>
     Read the <a href="demo/">demo</a> to see every plugin running in a real Astro build, or the <a href="mdx/">MDX page</a> for
-    the MDX side. The source, tests and changelogs are on
+    the MDX side. The source, tests and changelogs are on{" "}
     <a href="https://github.com/Ashish-CodeJourney/satteri-plugins">GitHub</a>.
   </p>
 </Page>
