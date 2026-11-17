@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/ci.yml)
 [![Release](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/release.yml/badge.svg)](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/release.yml)
-[![Example site](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/pages.yml/badge.svg)](https://ashish-codejourney.github.io/satteri-plugins)
+[![Example site](https://github.com/Ashish-CodeJourney/satteri-plugins/actions/workflows/pages.yml/badge.svg)](https://satteri-plugins.js.org/)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](package.json)
 [![Types](https://img.shields.io/badge/types-included-3178c6.svg?logo=typescript&logoColor=white)](tsconfig.base.json)
